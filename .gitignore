@@ -1,0 +1,28 @@
+# Ignore build artifacts
+/out/
+
+# Ignore SFML and other external libraries
+/lib/
+/bin/
+/include/
+
+# Ignore Visual Studio specific folders
+/.vs/
+/Ches/.vs/
+
+# Ignore CMake generated files
+/CMakeFiles/
+/CMakeCache.txt
+/cmake_install.cmake
+
+# Ignore executables and related files
+*.exe
+*.dll
+*.pdb
+*.lib
+
+# Ignore temporary files
+*.obj
+*.o
+*.log
+*.tmp

@@ -45,7 +45,7 @@ add_custom_command(TARGET chess POST_BUILD
     ${CMAKE_SOURCE_DIR}/Chess/Images $<TARGET_FILE_DIR:chess>/Images
 )
 #copy dll files into build folder after building
-set(SFML_DLL_DIR ${CMAKE_SOURCE_DIR}/Chess/bin)
+set(SFML_DLL_DIR ${CMAKE_SOURCE_DIR}/bin)
 
 
 # Copy DLL files from bin folder to the output directory after building

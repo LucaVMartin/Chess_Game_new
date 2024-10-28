@@ -60,8 +60,8 @@ sf::Vector2f UI::indexToCoordinates(int row, int col) {
 
 std::pair<int, int> UI::coordinatesToIndex(sf::Vector2i coordinates) {
   auto windowsize = getWindowSize();
-  int col = coordinates.x / windowsize.x * 8;
-  int row = (windowsize.y - coordinates.y) / windowsize.y * 8;
+  int col = static_cast<int>(coordinates.x / windowsize.x * 8);
+  int row = static_cast<int>((windowsize.y - coordinates.y) / windowsize.y * 8);
   // y-coordinate is inverted (highest value is on the bottom)
   return {row, col};
 }
@@ -81,16 +81,18 @@ void UI::drawBoard() {
   // Draw Board
   window->draw(board);
   // Draw Figures
-  for (auto pair : spriteByPieceId) {
-    window->draw(pair.second);
+  for (auto& piece : spriteByPieceId) {
+    window->draw(piece.second);
   }
-  if (movingPiece) {
+ 
+ //Currently the whole board is redrawn every loop so this does nothing
+ if (movingPiece) {
     auto sprite = getSprite(*movingPiece);
     window->draw(*sprite);
   }
 
   // Draw Possible Moves
-  for (auto &Rectangle : RectanglesofPossibleMoves) {
+  for (auto& Rectangle : RectanglesofPossibleMoves) {
     window->draw(Rectangle);
   }
 }
@@ -130,7 +132,7 @@ void UI::setUItoGame(Game &game) {
     spriteByPieceId.insert_or_assign((*piece).id, sprite);
     auto [row, col] = piece->getCurrentField();
     auto coordinates = indexToCoordinates(row, col);
-    movePiece(*piece, coordinates.x, coordinates.y);
+    movePiece(*piece, static_cast<int>(coordinates.x), static_cast<int>(coordinates.y));
   }
 }
 

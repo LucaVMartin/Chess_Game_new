@@ -70,5 +70,5 @@ class Board {
 
   Iterator begin();
   Iterator end();
-  int size() { return board.size(); }
+  size_t size() {return board.size();}
 };

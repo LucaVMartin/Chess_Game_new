@@ -12,7 +12,7 @@ class Game {
   std::shared_ptr<Piece> blackKing;
 
   void initializeBoard();
-  void invalidateAllLegalMoves(std::shared_ptr<Piece> pieceThatMoved);
+  void invalidateAllLegalMoves();
   void nextTurn() { isWhiteTurn = !isWhiteTurn; }
   void setIsCheck(Piece& piece);
 

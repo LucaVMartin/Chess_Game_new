@@ -7,9 +7,9 @@
 Piece::Piece(int row, int col, bool isWhite)
     : isWhite(isWhite), id(counter++), currentField({row, col}) {}
 
-Coordinates Piece::getCurrentField() const { return currentField; }
+const Coordinates Piece::getCurrentField() const { return currentField; }
 
-void Piece::invalidateLegalMoves(std::shared_ptr<Piece> pieceThatMoved) {
+void Piece::invalidateLegalMoves() {
   legalMoves.clear();
 }
 

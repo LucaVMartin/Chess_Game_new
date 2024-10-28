@@ -25,7 +25,7 @@ namespace std {
 class Board;
 class Piece {
 private:
-    static inline unsigned counter = 0;
+    static inline unsigned counter = 0; //to set the id of the piece (counter gets incremented when a Piece is constructed)
     Coordinates currentField = { 0, 0 };  // index in 2-dim array
 
  public:
@@ -44,10 +44,7 @@ private:
 
   
   virtual void invalidateLegalMoves();
-  /* nullptr means one self has moved TODO potential
-             optmization */
 
-  
   virtual void calculatePossibleMoves(Board& board) = 0;
   //For queen, rook, bishop, King(king might be changed since it is unnecessary here)
   std::unordered_set<Coordinates> continuousMoveGenerator(

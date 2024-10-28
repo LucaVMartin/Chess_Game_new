@@ -23,7 +23,7 @@ const std::unordered_set<Coordinates>& Piece::getLegalMoves(Board& board) {
 
 bool Piece::move(int row, int col, Board& board) {
   if (getLegalMoves(board).count({row, col})) {
-    gotMoved = true;
+    this->gotMoved = true;
     currentField = {row, col};
     invalidateLegalMoves();
     return true;

@@ -16,7 +16,7 @@ void Pawn::calculatePossibleMoves(Board& board) {
     // move blocked
     if (board[row][col]) break;
     // 2step move
-    if (i == 2 && gotMoved) break;
+    if (i == 2 && this->gotMoved) break;
     legalMoves.insert({row, col});
   }
 
@@ -32,7 +32,7 @@ void Pawn::calculatePossibleMoves(Board& board) {
     if (!(-1 < row && row < boardSize && -1 < col && col < boardSize)) continue;
     // check capture moves
     bool insertMove = false;
-    if (gotMoved) {
+    if (this->gotMoved) {
       // TODO check enpassant move
     }
     if (board[row][col]) {

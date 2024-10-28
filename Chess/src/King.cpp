@@ -1,7 +1,6 @@
 #include "King.h"
 
-#include <set>
-
+#include <unordered_set>
 #include "Board.h"
 
 void King::removeMovesUnderCheck(Board& board) {
@@ -18,7 +17,7 @@ void King::removeMovesUnderCheck(Board& board) {
 }
 
 void King::calculatePossibleMoves(Board& board) {
-  std::set<Coordinates> dirs = {
+  std::unordered_set<Coordinates> dirs = {
       {1, 1},    // diagonal up right
       {1, -1},   // diagonal up left
       {-1, -1},  // diagonal down left

@@ -5,7 +5,7 @@
 #include "Board.h"
 
 void Queen::calculatePossibleMoves(Board& board) {
-  std::set<Coordinates> dirs = {
+  std::unordered_set<Coordinates> dirs = {
       {1, 1},    // diagonal up right
       {1, -1},   // diagonal up left
       {-1, -1},  // diagonal down left

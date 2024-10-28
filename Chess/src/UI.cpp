@@ -6,6 +6,7 @@
 #include <vector>
 #include "Pawn.h"
 #include "Piece.h"
+#include "unordered_set"
 
 // helper functions
 void _import_textures(sf::Texture &Figure_t, const std::string &texture_file) {
@@ -137,7 +138,7 @@ void UI::setUItoGame(Game &game) {
 }
 
 void UI::CreateRectanglesOfPossibleMoves(
-    const std::set<Coordinates> &PossibleMoves) {
+    const std::unordered_set<Coordinates> &PossibleMoves) {
   for (auto &Move : PossibleMoves) {
     auto RectSize1 = (this->getWindowSize().x / 8);
     auto RectSize2 = (this->getWindowSize().y / 8);

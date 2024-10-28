@@ -1,7 +1,5 @@
 #include "Piece.h"
-
 #include <stdexcept>
-
 #include "Board.h"
 
 Piece::Piece(int row, int col, bool isWhite)
@@ -13,7 +11,7 @@ void Piece::invalidateLegalMoves() {
   legalMoves.clear();
 }
 
-const std::set<Coordinates>& Piece::getLegalMoves(Board& board) {
+const std::unordered_set<Coordinates>& Piece::getLegalMoves(Board& board) {
   if (legalMoves.empty()) {
     // if (!board)
     //   std::runtime_error("board is nullptr. please provide a board
@@ -33,13 +31,13 @@ bool Piece::move(int row, int col, Board& board) {
   return false;
 }
 
-std::set<Coordinates> Piece::continuousMoveGenerator(
-    Board& board, std::set<Coordinates> directions, int maxMoveLength) {
+std::unordered_set<Coordinates> Piece::continuousMoveGenerator(
+    Board& board, std::unordered_set<Coordinates> directions, int maxMoveLength) {
   int length = static_cast<int>(board.size());
   if (maxMoveLength > -1 && maxMoveLength < length) {
     length = maxMoveLength + 1;
   }
-  std::set<Coordinates> moves;
+  std::unordered_set<Coordinates> moves;
   //loop over all valid directions for the piece
   for (auto& dir : directions) {
       //check how many steps are possible in that direction

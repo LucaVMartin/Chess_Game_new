@@ -36,7 +36,7 @@ public:
   void setUItoGame(Game &game);
   void movePiece(Piece &piece, int x, int y);
   void
-  CreateRectanglesOfPossibleMoves(const std::set<Coordinates> &PossibleMoves);
+  CreateRectanglesOfPossibleMoves(const std::unordered_set<Coordinates> &PossibleMoves);
   void deleteRectanglesOfPossibleMoves();
   sf::Vector2f indexToCoordinates(int row, int col);
   std::pair<int, int> coordinatesToIndex(sf::Vector2i coordinates);

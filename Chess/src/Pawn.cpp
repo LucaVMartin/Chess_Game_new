@@ -1,7 +1,5 @@
 #include "Pawn.h"
 
-#include <set>
-
 void Pawn::calculatePossibleMoves(Board& board) {
   legalMoves.clear();
   auto boardSize = board.size();

@@ -1,11 +1,11 @@
 #include "Rook.h"
 
-#include <set>
+#include <unordered_set>
 
 #include "Board.h"
 
 void Rook::calculatePossibleMoves(Board& board) {
-  std::set<Coordinates> dirs = {
+  std::unordered_set<Coordinates> dirs = {
       {1, 0},   // up
       {-1, 0},  // down
       {0, 1},   // right

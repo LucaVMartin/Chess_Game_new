@@ -35,26 +35,33 @@ bool Piece::move(int row, int col, Board& board) {
 
 std::set<Coordinates> Piece::continuousMoveGenerator(
     Board& board, std::set<Coordinates> directions, int maxMoveLength) {
-  int length = board.size();
+  int length = static_cast<int>(board.size());
   if (maxMoveLength > -1 && maxMoveLength < length) {
     length = maxMoveLength + 1;
   }
   std::set<Coordinates> moves;
-  for (auto dir : directions) {
+  //loop over all valid directions for the piece
+  for (auto& dir : directions) {
+      //check how many steps are possible in that direction
     for (auto i = 1; i < length; ++i) {
-      int row = getCurrentField().row + i * dir.row;
-      int col = getCurrentField().col + i * dir.col;
-
+      int row = this->getCurrentField().row + i * dir.row;
+      int col = this->getCurrentField().col + i * dir.col;
+      //break if move would be out of bounds of the board
       if (row < 0 || row >= board.size() || col < 0 || col >= board.size()) {
         break;
       }
       Coordinates move = {row, col};
-      moves.insert(move);
-      if (board[row][col]) {
-        if (board[row][col]->isWhite == isWhite) {
-          moves.erase(move);
-        }
-        break;
+      //Insert to possible moves if there is no piece 
+      if (!board[row][col]) {
+        moves.insert(move);
+      }
+      //Insert move if there is an enemy piece in the way, break then
+      else if (!(board[row][col]->isWhite == isWhite)) {
+          moves.insert(move);
+          break;
+      } //If there is a white piece in the way, break
+      else {
+          break;
       }
     }
   }

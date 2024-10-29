@@ -81,6 +81,7 @@ std::unordered_set<Coordinates> Piece::continuousMoveGenerator(
 void Piece::removeCheckedMoves(Board& board) {
     auto currPiece = board[this->getCurrentField().row][this->getCurrentField().col];
     Coordinates kingpos;
+    std::vector<Coordinates> illegalMoves;
     board[this->getCurrentField().row][this->getCurrentField().col] = nullptr;
     for (auto& move: this->posMoves) {
         auto saveEnemyPiece = board[move.row][move.col];
@@ -96,7 +97,8 @@ void Piece::removeCheckedMoves(Board& board) {
                 enemypiece->calculatePossibleMoves(board);
                 for (auto& enemymove : enemypiece->posMoves) {
                     if (enemymove == kingpos) {//this mean the move would lead to check => not legal
-                        posMoves.erase(move); 
+                        illegalMoves.push_back(move);
+                        goto exit;
                     }
                 }
             }
@@ -104,7 +106,11 @@ void Piece::removeCheckedMoves(Board& board) {
                 continue;
             }
         }
+        exit:;
         board[move.row][move.col] = saveEnemyPiece;
+    }
+    for (auto& ilmove : illegalMoves) {//erase illegal moves from list
+        posMoves.erase(ilmove);
     }
     board[this->getCurrentField().row][this->getCurrentField().col] = currPiece; //reset position of current piece
 }

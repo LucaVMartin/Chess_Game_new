@@ -16,5 +16,5 @@ void King::calculatePossibleMoves(Board& board) {
       {0, -1},   // left
   };
   auto moves = continuousMoveGenerator(board, dirs, 1);
-  posMoves.merge(moves);
+  posMoves = moves;
 }

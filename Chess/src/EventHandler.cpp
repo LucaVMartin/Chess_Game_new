@@ -12,7 +12,7 @@ void EventHandler::handleMouseButtonPressed(sf::Event &e) {
     this->movingPiece = game.getPieceByCoordinates(row, col);
 
     // Mark the fields of possible Moves green
-    if (this->movingPiece && this->movingPiece->isWhite == game.isWhiteTurn) {
+    if (this->movingPiece && this->movingPiece->isWhite == game.board.isWhiteTurn) {
       auto PossibleMoves = this->movingPiece->getLegalMoves(game.board);
       ui.CreateRectanglesOfPossibleMoves(PossibleMoves);
     }

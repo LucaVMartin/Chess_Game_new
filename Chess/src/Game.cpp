@@ -26,13 +26,12 @@ void Game::invalidateAllLegalMoves() {
 
 bool Game::move(std::shared_ptr<Piece> piece, int row, int col) {
 	auto currentField = piece->getCurrentField();
-	if (piece->isWhite != isWhiteTurn) return false;
+	if (piece->isWhite != this->board.isWhiteTurn) return false;
 
 	if (piece->move(row, col, board)) {  // change state in piece object
 		// reflect changes on board
 		board[currentField.row][currentField.col] = nullptr;
 		board[row][col] = piece;
-
 		isCheck();
 		nextTurn();
 		invalidateAllLegalMoves();
@@ -44,13 +43,17 @@ bool Game::move(std::shared_ptr<Piece> piece, int row, int col) {
 const void Game::isCheck() {
 	//find king
 	std::shared_ptr<Piece> king;
-	if (this->isWhiteTurn)
+	if (this->board.isWhiteTurn) {
 		king = board.blackKing;
-	else
+		dynamic_cast<King*>(board.whiteKing.get())->checked = false;
+	}
+	else {
 		king = board.whiteKing;
+		dynamic_cast<King*>(board.blackKing.get())->checked = false;
+	}
 
 	for (auto enemypiece : board) {
-		if (enemypiece->isWhite == this->isWhiteTurn) { //only enemy pieces
+		if (enemypiece->isWhite == this->board.isWhiteTurn) { //only enemy pieces
 			enemypiece->calculatePossibleMoves(board);
 			for (auto& enemymove : enemypiece->posMoves) {
 				if (enemymove == king->getCurrentField()) {//this mean the move would lead to check => not legal

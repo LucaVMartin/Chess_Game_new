@@ -14,6 +14,7 @@ private:
 	BoardType board;
 
 public:
+	bool isWhiteTurn = true;
 	std::shared_ptr<Piece> whiteKing;
 	std::shared_ptr<Piece> blackKing;
 	Board();

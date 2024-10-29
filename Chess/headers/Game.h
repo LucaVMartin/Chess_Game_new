@@ -8,11 +8,9 @@ class Game {
 
  private:
   void invalidateAllLegalMoves();
-  void nextTurn() { isWhiteTurn = !isWhiteTurn; }
+  void nextTurn() { board.isWhiteTurn = !board.isWhiteTurn; }
 
  public:
-  bool isWhiteTurn = true;
-  std::shared_ptr<King> whiteKing;
   Board board;
   Game();
   ~Game() = default;

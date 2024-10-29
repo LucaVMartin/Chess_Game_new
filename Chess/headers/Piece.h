@@ -7,6 +7,8 @@
 struct Coordinates {
   int row;
   int col;
+  Coordinates(int r, int c) : row(r), col(c) {}
+  Coordinates() : row(0), col(0) {}
   //needed since unordered set is created with this struct
   bool operator==(const Coordinates& other) const {
       return row == other.row && col == other.col;
@@ -28,7 +30,7 @@ private:
     static inline unsigned counter = 0; //to set the id of the piece (counter gets incremented when a Piece is constructed)
     Coordinates currentField = { 0, 0 };  // index in 2-dim array
 
- public:
+public:
   const bool isWhite = true;
   const unsigned id;
   bool gotMoved = false;

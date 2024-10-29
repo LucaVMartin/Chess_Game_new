@@ -5,6 +5,7 @@
 class King : public Piece {
  public:
   using Piece::Piece;
+  bool checked = false;
   const std::string getName() const override { return "king"; }
 
  protected:

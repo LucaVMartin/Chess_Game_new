@@ -9,11 +9,11 @@
 void EventHandler::handleMouseButtonPressed(sf::Event &e) {
   if (e.mouseButton.button == sf::Mouse::Left) {
     auto [row, col] = ui.coordinatesToIndex({e.mouseButton.x, e.mouseButton.y});
-    movingPiece = game.getPieceByCoordinates(row, col);
+    this->movingPiece = game.getPieceByCoordinates(row, col);
 
     // Mark the fields of possible Moves green
-    if (movingPiece && movingPiece->isWhite == game.isWhiteTurn) {
-      auto PossibleMoves = movingPiece->getLegalMoves(game.board);
+    if (this->movingPiece && this->movingPiece->isWhite == game.isWhiteTurn) {
+      auto PossibleMoves = this->movingPiece->getLegalMoves(game.board);
       ui.CreateRectanglesOfPossibleMoves(PossibleMoves);
     }
   }
@@ -21,10 +21,10 @@ void EventHandler::handleMouseButtonPressed(sf::Event &e) {
 
 void EventHandler::handleMouseButtonReleased(sf::Event &e) {
   if (e.mouseButton.button == sf::Mouse::Left) {
-    if (movingPiece) {
+    if (this->movingPiece) {
       ui.deleteRectanglesOfPossibleMoves();
-      auto piece = movingPiece;
-      movingPiece = nullptr;
+      auto piece = this->movingPiece;
+      this->movingPiece = nullptr;
       auto [row, col] =
           ui.coordinatesToIndex({e.mouseButton.x, e.mouseButton.y});
       game.move(piece, row, col);
@@ -51,11 +51,11 @@ void EventHandler::handleEvents() {
         break;
     }
     auto mouse = sf::Mouse::getPosition(window);
-    if (movingPiece) {
+    if (this->movingPiece) {
       auto windowSize = window.getSize();
       int offset_x = mouse.x % (windowSize.x / 8);
       int offset_y = mouse.y % (windowSize.y / 8);
-      ui.movePiece(*movingPiece, mouse.x - offset_x, mouse.y - offset_y);
+      ui.movePiece(*(this->movingPiece), mouse.x - offset_x, mouse.y - offset_y);
     }
   }
 }

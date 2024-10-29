@@ -112,7 +112,7 @@ sf::Sprite *UI::getSprite(const Piece &piece) {
 void UI::movePiece(Piece &piece, int x, int y) {
   /* moves piece to the coordinates
   x and y need to bee SFML compatible coordinates of the windows*/
-  movingPiece = &piece;
+  this->movingPiece = &piece;
   auto sprite = getSprite(piece);
   sprite->setPosition({ static_cast<float>(x), static_cast<float>(y)});
 }
@@ -128,7 +128,7 @@ sf::Sprite UI::createPieceSprite(const Piece &piece) {
 
 void UI::setUItoGame(Game &game) {
   spriteByPieceId.clear();
-  for (auto piece : game) {
+  for (auto piece : game) {//loops over pieces on board
     auto sprite = createPieceSprite(*piece);
     spriteByPieceId.insert_or_assign((*piece).id, sprite);
     auto [row, col] = piece->getCurrentField();

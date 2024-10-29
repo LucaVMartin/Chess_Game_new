@@ -8,7 +8,7 @@ size_t Board::size() { return board.size();}
 
 Board::Iterator::Iterator(BoardType& board) : board(board) {
     if (operator*() == nullptr) {
-        ++(*this);
+        ++(*this); //so it points to the first piece on the board
     }
 }
 

@@ -4,7 +4,7 @@
 #include <utility>
 
 void Knight::calculatePossibleMoves(Board &board) {
-  legalMoves.clear();
+  posMoves.clear();
   auto boardSize = board.size();
 
   // Forward Right
@@ -14,11 +14,11 @@ void Knight::calculatePossibleMoves(Board &board) {
       if ((-1 < row && row < boardSize && -1 < col && col < boardSize)) {
         // check if field is free
         if (!board[row][col]) {
-          legalMoves.insert({row, col});
+          posMoves.insert({row, col});
         }
         // check if move blocked by own figure
         else if (this->isWhite != board[row][col]->isWhite) {
-          legalMoves.insert({row, col});
+          posMoves.insert({row, col});
         }
       }
 
@@ -29,11 +29,11 @@ void Knight::calculatePossibleMoves(Board &board) {
       if ((-1 < row && row < boardSize && -1 < col && col < boardSize)) {
         // check if field is free
         if (!board[row][col]) {
-          legalMoves.insert({row, col});
+          posMoves.insert({row, col});
         }
         // check if move blocked by own figure
         else if (this->isWhite != board[row][col]->isWhite) {
-          legalMoves.insert({row, col});
+          posMoves.insert({row, col});
         }
       }
 
@@ -44,11 +44,11 @@ void Knight::calculatePossibleMoves(Board &board) {
       if ((-1 < row && row < boardSize && -1 < col && col < boardSize)) {
         // check if field is free
         if (!board[row][col]) {
-          legalMoves.insert({row, col});
+          posMoves.insert({row, col});
         }
         // check if move blocked by own figure
         else if (this->isWhite != board[row][col]->isWhite) {
-          legalMoves.insert({row, col});
+          posMoves.insert({row, col});
         }
       }
 
@@ -59,11 +59,11 @@ void Knight::calculatePossibleMoves(Board &board) {
       if ((-1 < row && row < boardSize && -1 < col && col < boardSize)) {
         // check if field is free
         if (!board[row][col]) {
-          legalMoves.insert({row, col});
+          posMoves.insert({row, col});
         }
         // check if move blocked by own figure
         else if (this->isWhite != board[row][col]->isWhite) {
-          legalMoves.insert({row, col});
+          posMoves.insert({row, col});
         }
       }
 
@@ -74,11 +74,11 @@ void Knight::calculatePossibleMoves(Board &board) {
   if ((-1 < row && row < boardSize && -1 < col && col < boardSize)) {
     // check if field is free
     if (!board[row][col]) {
-      legalMoves.insert({row, col});
+      posMoves.insert({row, col});
     }
     // check if move blocked by own figure
     else if (this->isWhite != board[row][col]->isWhite) {
-      legalMoves.insert({row, col});
+      posMoves.insert({row, col});
     }
   }
 
@@ -89,11 +89,11 @@ void Knight::calculatePossibleMoves(Board &board) {
   if ((-1 < row && row < boardSize && -1 < col && col < boardSize)) {
     // check if field is free
     if (!board[row][col]) {
-      legalMoves.insert({row, col});
+      posMoves.insert({row, col});
     }
     // check if move blocked by own figure
     else if (this->isWhite != board[row][col]->isWhite) {
-      legalMoves.insert({row, col});
+      posMoves.insert({row, col});
     }
   }
 
@@ -104,11 +104,11 @@ void Knight::calculatePossibleMoves(Board &board) {
   if ((-1 < row && row < boardSize && -1 < col && col < boardSize)) {
     // check if field is free
     if (!board[row][col]) {
-      legalMoves.insert({row, col});
+      posMoves.insert({row, col});
     }
     // check if move blocked by own figure
     else if (this->isWhite != board[row][col]->isWhite) {
-      legalMoves.insert({row, col});
+      posMoves.insert({row, col});
     }
   }
 
@@ -119,11 +119,11 @@ void Knight::calculatePossibleMoves(Board &board) {
   if ((-1 < row && row < boardSize && -1 < col && col < boardSize)) {
     // check if field is free
     if (!board[row][col]) {
-      legalMoves.insert({row, col});
+      posMoves.insert({row, col});
     }
     // check if move blocked by own figure
     else if (this->isWhite != board[row][col]->isWhite) {
-      legalMoves.insert({row, col});
+      posMoves.insert({row, col});
     }
   }
 }

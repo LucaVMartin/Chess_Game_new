@@ -1,7 +1,7 @@
 #include "Pawn.h"
 
 void Pawn::calculatePossibleMoves(Board& board) {
-  legalMoves.clear();
+  posMoves.clear();
   auto boardSize = board.size();
   auto sign =
       isWhite ? 1 : -1;  // white moves in different direction than black
@@ -17,7 +17,7 @@ void Pawn::calculatePossibleMoves(Board& board) {
     if (board[row][col]) break;
     // 2step move
     if (i == 2 && this->gotMoved) break;
-    legalMoves.insert({row, col});
+    posMoves.insert({row, col});
   }
 
   // capture moves
@@ -39,6 +39,7 @@ void Pawn::calculatePossibleMoves(Board& board) {
       if (board[row][col]->isWhite != isWhite) insertMove = true;
     };  // capture field is has opponent piece
 
-    if (insertMove) legalMoves.insert({row, col});
+    if (insertMove) posMoves.insert({row, col});
   }
+
 }

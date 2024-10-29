@@ -54,28 +54,15 @@ void Game::invalidateAllLegalMoves() {
   }
 }
 
-void Game::setIsCheck(Piece& movingPiece) {
-  if (movingPiece.getName() == "king") {
-    isCheck = false;
-  } else {
-    auto king = isWhiteTurn ? blackKing : whiteKing;
-    auto kingPos = king->getCurrentField();
-    if (movingPiece.getLegalMoves(board).count(kingPos)) {
-      isCheck = true;
-    }
-  }
-}
 
 bool Game::move(std::shared_ptr<Piece> piece, int row, int col) {
   auto currentField = piece->getCurrentField();
   if (piece->isWhite != isWhiteTurn) return false;
-  if (isCheck && piece->getName() != "king") return false;
 
   if (piece->move(row, col, board)) {  // change state in piece object
     // reflect changes on board
     board[currentField.row][currentField.col] = nullptr;
     board[row][col] = piece;
-    setIsCheck(*piece);
     nextTurn();
     invalidateAllLegalMoves();
     return true;

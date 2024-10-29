@@ -12,5 +12,5 @@ void Rook::calculatePossibleMoves(Board& board) {
       {0, -1},  // left
   };
   auto moves = continuousMoveGenerator(board, dirs);
-  legalMoves.merge(moves);
+  posMoves.merge(moves);
 }

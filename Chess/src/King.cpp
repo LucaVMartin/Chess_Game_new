@@ -3,18 +3,6 @@
 #include <unordered_set>
 #include "Board.h"
 
-void King::removeMovesUnderCheck(Board& board) {
-  for (auto piece : board) {
-    if (piece->isWhite == this->isWhite || piece.get() == this) {
-      continue;
-    }
-    for (auto move : legalMoves) {
-      if (piece->getLegalMoves(board).count(move)) {
-        legalMoves.erase(move);
-      }
-    }
-  }
-}
 
 void King::calculatePossibleMoves(Board& board) {
   std::unordered_set<Coordinates> dirs = {
@@ -28,6 +16,5 @@ void King::calculatePossibleMoves(Board& board) {
       {0, -1},   // left
   };
   auto moves = continuousMoveGenerator(board, dirs, 1);
-  legalMoves.merge(moves);
-  removeMovesUnderCheck(board);
+  posMoves.merge(moves);
 }

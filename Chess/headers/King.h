@@ -9,5 +9,4 @@ class King : public Piece {
 
  protected:
   void calculatePossibleMoves(Board& board) override;
-  void removeMovesUnderCheck(Board& board);
 };

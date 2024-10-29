@@ -32,7 +32,7 @@ private:
   const bool isWhite = true;
   const unsigned id;
   bool gotMoved = false;
-  std::unordered_set<Coordinates> legalMoves{};
+  std::unordered_set<Coordinates> posMoves{};
   Piece(int row = 0, int col = 0, bool isWhite = true);
   virtual ~Piece() = default;
 
@@ -47,6 +47,7 @@ private:
 
   virtual void calculatePossibleMoves(Board& board) = 0;
   //For queen, rook, bishop, King(king might be changed since it is unnecessary here)
+  void removeCheckedMoves(Board& board);
   std::unordered_set<Coordinates> continuousMoveGenerator(
       Board& board, std::unordered_set<Coordinates> directions, int maxMoveLength = -1);
 };

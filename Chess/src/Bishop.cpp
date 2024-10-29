@@ -12,5 +12,5 @@ void Bishop::calculatePossibleMoves(Board& board) {
       {-1, 1},   // diagonal down right
   };
   auto moves = continuousMoveGenerator(board, dirs);
-  legalMoves.merge(moves);
+  posMoves.merge(moves);
 }

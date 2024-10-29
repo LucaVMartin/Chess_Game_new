@@ -8,17 +8,18 @@ Piece::Piece(int row, int col, bool isWhite)
 const Coordinates Piece::getCurrentField() const { return currentField; }
 
 void Piece::invalidateLegalMoves() {
-  legalMoves.clear();
+  posMoves.clear();
 }
 
 const std::unordered_set<Coordinates>& Piece::getLegalMoves(Board& board) {
-  if (legalMoves.empty()) {
+  if (posMoves.empty()) {
     // if (!board)
     //   std::runtime_error("board is nullptr. please provide a board
     //   reference");
     calculatePossibleMoves(board);
+    removeCheckedMoves(board);
   }
-  return legalMoves;
+  return posMoves;
 }
 
 bool Piece::move(int row, int col, Board& board) {
@@ -64,4 +65,46 @@ std::unordered_set<Coordinates> Piece::continuousMoveGenerator(
     }
   }
   return moves;
+}
+// loop over possibleMoves
+    //perform possiblemove
+        //check if square contains enemy piece
+            //yes: saveptr;       
+    //loop over enemy Pieces
+        //calculate enemy possiblemoves  
+        //loop over enemy possibleMoves
+            //check if enemy possibleMove contains king pos
+                //YES: remove move from legalMoves
+                //No: if(save_ptr)
+                    // board[moves.row][move.col] = saveptr;
+
+void Piece::removeCheckedMoves(Board& board) {
+    auto currPiece = board[this->getCurrentField().row][this->getCurrentField().col];
+    Coordinates kingpos;
+    board[this->getCurrentField().row][this->getCurrentField().col] = nullptr;
+    for (auto& move: this->posMoves) {
+        auto saveEnemyPiece = board[move.row][move.col];
+        board[move.row][move.col] = currPiece;//move current piece
+        for (auto piece : board) {//Find King
+            if (piece->getName() == "king" && piece->isWhite == currPiece->isWhite) {
+                kingpos = piece->getCurrentField(); 
+                break;
+            }
+        }
+        for (auto enemypiece : board) {
+            if (enemypiece->isWhite != currPiece->isWhite) { //only enemy pieces
+                enemypiece->calculatePossibleMoves(board);
+                for (auto& enemymove : enemypiece->posMoves) {
+                    if (enemymove == kingpos) {//this mean the move would lead to check => not legal
+                        posMoves.erase(move); 
+                    }
+                }
+            }
+            else {
+                continue;
+            }
+        }
+        board[move.row][move.col] = saveEnemyPiece;
+    }
+    board[this->getCurrentField().row][this->getCurrentField().col] = currPiece; //reset position of current piece
 }

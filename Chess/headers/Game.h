@@ -7,14 +7,12 @@ class Game {
   /* A class that unifies game state and logic */
 
  private:
-  bool isCheck = false;
   std::shared_ptr<Piece> whiteKing;
   std::shared_ptr<Piece> blackKing;
 
   void initializeBoard();
   void invalidateAllLegalMoves();
   void nextTurn() { isWhiteTurn = !isWhiteTurn; }
-  void setIsCheck(Piece& piece);
 
  public:
   bool isWhiteTurn = true;

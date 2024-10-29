@@ -12,13 +12,8 @@ void Piece::invalidateLegalMoves() {
 }
 
 const std::unordered_set<Coordinates>& Piece::getLegalMoves(Board& board) {
-  if (posMoves.empty()) {
-    // if (!board)
-    //   std::runtime_error("board is nullptr. please provide a board
-    //   reference");
     calculatePossibleMoves(board);
     removeCheckedMoves(board);
-  }
   return posMoves;
 }
 
@@ -66,18 +61,6 @@ std::unordered_set<Coordinates> Piece::continuousMoveGenerator(
   }
   return moves;
 }
-// loop over possibleMoves
-    //perform possiblemove
-        //check if square contains enemy piece
-            //yes: saveptr;       
-    //loop over enemy Pieces
-        //calculate enemy possiblemoves  
-        //loop over enemy possibleMoves
-            //check if enemy possibleMove contains king pos
-                //YES: remove move from legalMoves
-                //No: if(save_ptr)
-                    // board[moves.row][move.col] = saveptr;
-
 void Piece::removeCheckedMoves(Board& board) {
     auto currPiece = board[this->getCurrentField().row][this->getCurrentField().col];
     Coordinates kingpos;
@@ -88,7 +71,12 @@ void Piece::removeCheckedMoves(Board& board) {
         board[move.row][move.col] = currPiece;//move current piece
         for (auto piece : board) {//Find King
             if (piece->getName() == "king" && piece->isWhite == currPiece->isWhite) {
-                kingpos = piece->getCurrentField(); 
+                if (currPiece->getName() == "king") {
+                    kingpos = move;
+                }
+                else {
+                    kingpos = piece->getCurrentField();
+                }
                 break;
             }
         }

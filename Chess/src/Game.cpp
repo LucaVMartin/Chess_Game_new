@@ -30,8 +30,17 @@ bool Game::move(std::shared_ptr<Piece> piece, int row, int col) {
 
 	if (piece->move(row, col, board)) {  // change state in piece object
 		// reflect changes on board
+		//short castle
+		if (piece->getName() == "king" && currentField.col + 2 == col) {
+			//board[row][col - 1]->posMoves.insert(Coordinates(row, col - 1));
+			board[row][col + 1]->move(row, col - 1, board);
+			board[row][col - 1] = board[row][col + 1];
+			board[row][col + 1] = nullptr;
+		}
 		board[currentField.row][currentField.col] = nullptr;
 		board[row][col] = piece;
+		
+		
 		isCheck();
 		nextTurn();
 		invalidateAllLegalMoves();

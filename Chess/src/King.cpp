@@ -24,15 +24,15 @@ void King::calculatePossibleMoves(Board& board) {
 	{
 		//short castle
 		if (
+			board[this->getCurrentField().row][this->getCurrentField().col + 3] && //piece is there 
+			board[this->getCurrentField().row][this->getCurrentField().col + 3]->getName() == "rook" && //piece is rook
 			!board[this->getCurrentField().row][this->getCurrentField().col + 3]->gotMoved && //rook not moved
 			!board[this->getCurrentField().row][this->getCurrentField().col + 1] && //Field next to king empty
 			!board[this->getCurrentField().row][this->getCurrentField().col + 2] //Field 2 next to king empty
 			) {
-
-			//square next to king and 2 next to king
 			for (auto enemypiece : board) {
 				if (enemypiece->isWhite != this->isWhite) { //only enemy pieces
-					enemypiece->calculatePossibleMoves(board);//Recursion MÖGICH
+					enemypiece->calculatePossibleMoves(board);
 					for (auto& enemymove : enemypiece->posMoves) {
 						if (enemymove == Coordinates(this->getCurrentField().row, this->getCurrentField().col + 1) ||
 							enemymove == Coordinates(this->getCurrentField().row, this->getCurrentField().col + 2)) {//one of the squares is not attacked
@@ -48,5 +48,30 @@ void King::calculatePossibleMoves(Board& board) {
 			posMoves.insert(Coordinates(this->getCurrentField().row, this->getCurrentField().col + 2));
 		}
 		//long castle
+		if (
+			board[this->getCurrentField().row][this->getCurrentField().col - 4] && //piece is there 
+			board[this->getCurrentField().row][this->getCurrentField().col - 4]->getName() == "rook" && //piece is rook
+			!board[this->getCurrentField().row][this->getCurrentField().col - 4]->gotMoved && //rook not moved
+			!board[this->getCurrentField().row][this->getCurrentField().col - 1] && //Field next to king empty
+			!board[this->getCurrentField().row][this->getCurrentField().col - 2] &&//Field 2 next to king empty
+			!board[this->getCurrentField().row][this->getCurrentField().col - 3] //Field 3 next to king empty
+			) {
+			for (auto enemypiece : board) {
+				if (enemypiece->isWhite != this->isWhite) { //only enemy pieces
+					enemypiece->calculatePossibleMoves(board);
+					for (auto& enemymove : enemypiece->posMoves) {
+						if (enemymove == Coordinates(this->getCurrentField().row, this->getCurrentField().col - 1) ||
+							enemymove == Coordinates(this->getCurrentField().row, this->getCurrentField().col - 2)) {//one of the squares is not attacked
+							return;
+						}
+					}
+				}
+				else {
+					continue;
+				}
+			}
+			//Insert castle move
+			posMoves.insert(Coordinates(this->getCurrentField().row, this->getCurrentField().col - 2));
+		}
 	}
 }

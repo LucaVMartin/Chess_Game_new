@@ -45,24 +45,19 @@ bool Game::move(std::shared_ptr<Piece> piece, int row, int col) { //returns true
 			board[row][col - 2] = nullptr;
 		}
 		//Promotion
-		else if (piece->getName() == "pawn" && row == 7 || row == 0) {
-			if (piece->isWhite) {
-				std::cout << "white promote!!" << std::endl;
-
-			}
-			else {
-				std::cout << "black promote!!" << std::endl;
-			}
-			board[currentField.row][currentField.col] = nullptr; //reset previous pos
-			board[row][col] = piece; //put piece to new position
-			return true;
+		else if (piece->getName() == "pawn" && (row == 7 || row == 0)) {
+			board.Promotion.col = col;
+			board.Promotion.row = row;
+			promotion = true;
 		}
+
 		board[currentField.row][currentField.col] = nullptr; //reset previous pos
 		board[row][col] = piece; //put piece to new position
 
 		isCheck();
 		nextTurn();
 		invalidateAllLegalMoves();
+		return true;
 	}
 	return false;
 }

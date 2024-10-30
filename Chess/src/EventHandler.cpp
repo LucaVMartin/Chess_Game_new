@@ -9,9 +9,9 @@
 void EventHandler::handleMouseButtonPressed(sf::Event& e) {
 
 	if (e.mouseButton.button == sf::Mouse::Left) {
-		/*if (ui.promote) {
-			auto piece = 
-		}*/
+		if (game.promotion) {
+			return;
+		}
 
 		auto [row, col] = ui.coordinatesToIndex({ e.mouseButton.x, e.mouseButton.y });
 		this->movingPiece = game.getPieceByCoordinates(row, col);
@@ -26,16 +26,25 @@ void EventHandler::handleMouseButtonPressed(sf::Event& e) {
 
 void EventHandler::handleMouseButtonReleased(sf::Event& e) {
 	if (e.mouseButton.button == sf::Mouse::Left) {
+		
 		if (this->movingPiece) {
 			ui.deleteRectanglesOfPossibleMoves();
 			auto piece = this->movingPiece;
 			this->movingPiece = nullptr;
 			auto [row, col] =
 				ui.coordinatesToIndex({ e.mouseButton.x, e.mouseButton.y });
-			ui.promote = game.move(piece, row, col); //checks if promotion UI needs to be started
-			if (ui.promote) {
+			game.move(piece, row, col); //checks if promotion UI needs to be started
+			if (game.promotion) {
 				ui.promotionUI(piece->isWhite);
 			}
+			ui.setUItoGame(game);
+			return;
+		}
+		if (game.promotion) {
+			std::string piece = ui.promotionSelector({ e.mouseButton.x, e.mouseButton.y });
+			game.board.createPromotionPiece(piece);
+			ui.deletePromotionUI();
+			game.promotion = false;
 			ui.setUItoGame(game);
 		}
 	}

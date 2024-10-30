@@ -7,6 +7,7 @@
 #include "Pawn.h"
 #include "Piece.h"
 #include "unordered_set"
+#include <iostream>
 
 // helper functions
 void _import_textures(sf::Texture& Figure_t, const std::string& texture_file) {
@@ -90,13 +91,10 @@ void UI::drawBoard() {
 		window->draw(Rectangle);
 	}
 	// Draw selection for Promotion
-	if (this->promote) {
 		window->draw(BackgroundPromotion);
 		for (auto& promPiece : PromotionPieces) {
 			window->draw(promPiece);
 		}
-		
-	}
 }
 
 sf::Texture* UI::getTexture(const Piece& piece) {
@@ -156,6 +154,7 @@ void UI::deleteRectanglesOfPossibleMoves() {
 }
 
 void UI::promotionUI(const bool color) {
+	PromotionPieces.clear();
 	auto BackgroundSizeX = this->getWindowSize().x;
 	auto BackgroundSizeY = this->getWindowSize().y / 4;
 	BackgroundPromotion = sf::RectangleShape(sf::Vector2f(BackgroundSizeX, BackgroundSizeY));
@@ -190,11 +189,43 @@ void UI::promotionUI(const bool color) {
 	float columnWidth = getWindowSize().x / 4;
 	for (int i = 0;i < PromotionPieces.size();++i) {
 		PromotionPieces[i].setScale(
-			0.6*(getWindowSize().x / 4) / PromotionPieces[i].getLocalBounds().width,
-			0.6*(getWindowSize().y / 4) / PromotionPieces[i].getLocalBounds().height);
+			0.6 * (getWindowSize().x / 4) / PromotionPieces[i].getLocalBounds().width,
+			0.6 * (getWindowSize().y / 4) / PromotionPieces[i].getLocalBounds().height);
 		sf::Vector2f positionPiece{};
 		positionPiece.x = (i * columnWidth) + (columnWidth / 2) - (PromotionPieces[i].getGlobalBounds().width / 2);
 		positionPiece.y = (getWindowSize().y - PromotionPieces[i].getGlobalBounds().height) / 2;
 		PromotionPieces[i].setPosition(positionPiece);
+	}
+}
+
+void UI::deletePromotionUI() {
+	PromotionPieces.clear();
+	BackgroundPromotion.setSize(sf::Vector2f(0, 0));
+}
+
+std::string UI::promotionSelector(sf::Vector2i mouseCoordinates) {
+	auto mousePos = window->mapPixelToCoords(mouseCoordinates);
+	for (int i = 0; i < PromotionPieces.size(); ++i) {
+		if (PromotionPieces[i].getGlobalBounds().contains(mousePos)) {
+			// Handle promotion based on which piece was clicked
+			switch (i) {
+			case 0:
+				// Queen selected
+				return "queen";
+				break;
+			case 1:
+				// Bishop selected
+				return "bishop";
+				break;
+			case 2:
+				// Knight selected
+				return "knight";
+				break;
+			case 3:
+				// Rook selected
+				return "rook";
+				break;
+			}
+		}
 	}
 }

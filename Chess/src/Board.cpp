@@ -38,47 +38,62 @@ Board::Board() {
 	board[7][6] = std::make_shared<Knight>(7, 6, false);
 }
 
-std::array<std::shared_ptr<Piece>, 8>& Board::operator[](int row) {
-         return board[row];
-     }
+void Board::createPromotionPiece(std::string pieceName) {
+	if (pieceName == "queen") {
+		board[Promotion.row][Promotion.col] = std::make_shared<Queen>(Promotion.row, Promotion.col, !this->isWhiteTurn);
+	}
+	else if (pieceName == "knight") {
+		board[Promotion.row][Promotion.col] = std::make_shared<Knight>(Promotion.row, Promotion.col, !this->isWhiteTurn);
+	}
+	else if (pieceName == "rook") {
+		board[Promotion.row][Promotion.col] = std::make_shared<Rook>(Promotion.row, Promotion.col, !this->isWhiteTurn);
+	}
+	else if (pieceName == "bishop") {
+		board[Promotion.row][Promotion.col] = std::make_shared<Bishop>(Promotion.row, Promotion.col, !this->isWhiteTurn);
+	}
+}
 
-size_t Board::size() { return board.size();}
+std::array<std::shared_ptr<Piece>, 8>& Board::operator[](int row) {
+	return board[row];
+}
+
+size_t Board::size() { return board.size(); }
 
 Board::Iterator::Iterator(BoardType& board) : board(board) {
-    if (operator*() == nullptr) {
-        ++(*this); //so it points to the first piece on the board
-    }
+	if (operator*() == nullptr) {
+		++(*this); //so it points to the first piece on the board
+	}
 }
 
 Board::Iterator::Iterator(BoardType& board, bool isEnd)
-    : board(board), i_row(board.size()) {}
+	: board(board), i_row(board.size()) {}
 
 std::shared_ptr<Piece> Board::Iterator::operator*() {
-    if (i_row < board.size()) {
-        return board[i_row][i_col];
-    }
-    return nullptr;
+	if (i_row < board.size()) {
+		return board[i_row][i_col];
+	}
+	return nullptr;
 }
 
 Board::Iterator& Board::Iterator::operator++() {
-    do {
-        if (i_col == board.size() - 1) {
-            ++i_row;
-            i_col = 0;
-        }
-        else {
-            ++i_col;
-        }
-    } while (i_row < board.size() && board[i_row][i_col] == nullptr);
-    return *this;
+	do {
+		if (i_col == board.size() - 1) {
+			++i_row;
+			i_col = 0;
+		}
+		else {
+			++i_col;
+		}
+	} while (i_row < board.size() && board[i_row][i_col] == nullptr);
+	return *this;
 }
 
 bool Board::Iterator::operator==(const Iterator& other) const {
-    return &board == &other.board && i_row == other.i_row && i_col == other.i_col;
+	return &board == &other.board && i_row == other.i_row && i_col == other.i_col;
 }
 
 bool Board::Iterator::operator!=(const Iterator& other) const {
-    return !(*this == other);
+	return !(*this == other);
 }
 
 

@@ -14,10 +14,12 @@ private:
 	BoardType board;
 
 public:
+	Coordinates Promotion;
 	bool isWhiteTurn = true;
 	std::shared_ptr<Piece> whiteKing;
 	std::shared_ptr<Piece> blackKing;
 	Board();
+	void createPromotionPiece(std::string pieceName);
 	std::array<std::shared_ptr<Piece>, 8>& operator[](int row);
 	size_t size();
 

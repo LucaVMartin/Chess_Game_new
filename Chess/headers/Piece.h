@@ -34,6 +34,7 @@ public:
   const bool isWhite = true;
   const unsigned id;
   bool gotMoved = false;
+  bool justMadeFirstMove = false;
   std::unordered_set<Coordinates> posMoves{};
   Piece(int row = 0, int col = 0, bool isWhite = true);
   virtual ~Piece() = default;

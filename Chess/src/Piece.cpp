@@ -19,7 +19,11 @@ const std::unordered_set<Coordinates>& Piece::getLegalMoves(Board& board) {
 
 bool Piece::move(int row, int col, Board& board) {
 	if (getLegalMoves(board).count({ row, col })) {
-		this->gotMoved = true;
+		if (!this->gotMoved) {
+			this->gotMoved = true;
+			this->justMadeFirstMove = true; //important for enpassant
+		}
+
 		currentField = { row, col };
 		invalidateLegalMoves();
 		return true;
@@ -66,7 +70,22 @@ void Piece::removeCheckedMoves(Board& board) {
 	Coordinates kingpos;
 	std::vector<Coordinates> illegalMoves;
 	board[this->getCurrentField().row][this->getCurrentField().col] = nullptr;
+	bool enpassant = false;
+	std::shared_ptr<Piece> saveEnpassantPiece;
 	for (auto& move : this->posMoves) {
+
+		//Check if enpassant
+		if (currPiece->getName() == "pawn" && //check if it is a pawn
+			currPiece->getCurrentField().row == 3 + currPiece->isWhite && //check if white piece is in 4th /black piece in 3rd row 
+			!board[move.row][move.col] && //check if move field is empty
+			currPiece->getCurrentField().col != move.col)//check if it is a diagonal move
+		{
+			//save captured piece
+			saveEnpassantPiece = board[move.row - (currPiece->isWhite ? 1 : -1)][move.col];
+			board[move.row - (currPiece->isWhite ? 1 : -1)][move.col] = nullptr;
+			enpassant = true;
+		}
+
 		auto saveEnemyPiece = board[move.row][move.col];
 		board[move.row][move.col] = currPiece;//move current piece
 		//Set kingposition
@@ -98,9 +117,17 @@ void Piece::removeCheckedMoves(Board& board) {
 		}
 	exit:;
 		board[move.row][move.col] = saveEnemyPiece;
+		if (enpassant) {
+			board[move.row - (currPiece->isWhite ? 1 : -1)][move.col] = saveEnpassantPiece; //put captured piece back in 
+			enpassant = false;
+		}
 	}
+
+
 	for (auto& ilmove : illegalMoves) {//erase illegal moves from list
 		posMoves.erase(ilmove);
 	}
+
+
 	board[this->getCurrentField().row][this->getCurrentField().col] = currPiece; //reset position of current piece
 }

@@ -42,6 +42,7 @@ void EventHandler::handleMouseButtonReleased(sf::Event& e) {
 		}
 		if (game.promotion) {
 			std::string piece = ui.promotionSelector({ e.mouseButton.x, e.mouseButton.y });
+			if (piece == "nopiece") return;
 			game.board.createPromotionPiece(piece);
 			ui.deletePromotionUI();
 			game.promotion = false;

@@ -25,9 +25,9 @@ void Game::invalidateAllLegalMoves() {
 }
 
 
-bool Game::move(std::shared_ptr<Piece> piece, int row, int col) { //returns true if promotion
+void Game::move(std::shared_ptr<Piece> piece, int row, int col) {
 	auto currentField = piece->getCurrentField();
-	if (piece->isWhite != this->board.isWhiteTurn) return false;
+	if (piece->isWhite != this->board.isWhiteTurn) return;
 
 	if (piece->move(row, col, board)) {  // change state in piece object
 		// reflect changes on board
@@ -48,18 +48,24 @@ bool Game::move(std::shared_ptr<Piece> piece, int row, int col) { //returns true
 		else if (piece->getName() == "pawn" && (row == 7 || row == 0)) {
 			board.Promotion.col = col;
 			board.Promotion.row = row;
-			promotion = true;
+			this->promotion = true;
+		}
+		//enpassant
+		else if (piece->getName() == "pawn" && //check if it is a pawn
+			piece->getCurrentField().row == (piece->isWhite ? 5 : 2) && //check if white piece is in 5th /black piece in 2rd row 
+			!board[row][col] && //check if move field is empty
+			piece->getCurrentField().col != currentField.col) { //check if diagonal move
+			board[row - (piece->isWhite ? 1 : -1)][col] = nullptr;
 		}
 
 		board[currentField.row][currentField.col] = nullptr; //reset previous pos
 		board[row][col] = piece; //put piece to new position
 
+		resetJustMadeFirstMove(); //for enpassant
 		isCheck();
 		nextTurn();
 		invalidateAllLegalMoves();
-		return true;
 	}
-	return false;
 }
 
 const void Game::isCheck() {
@@ -83,6 +89,14 @@ const void Game::isCheck() {
 					return;
 				}
 			}
+		}
+	}
+}
+
+void Game::resetJustMadeFirstMove() {
+	for (auto enemypiece : board) {
+		if (enemypiece->isWhite != this->board.isWhiteTurn && enemypiece->getName() == "pawn") {
+			enemypiece->justMadeFirstMove = false;
 		}
 	}
 }

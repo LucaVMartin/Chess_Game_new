@@ -228,4 +228,5 @@ std::string UI::promotionSelector(sf::Vector2i mouseCoordinates) {
 			}
 		}
 	}
+	return "nopiece";
 }

@@ -23,6 +23,7 @@ private:
 	sf::Sprite createPieceSprite(const Piece& piece);
 	void createBoard();
 	void _loadAllTextures();
+
 	sf::Texture* getTexture(const Piece& piece);
 	sf::Sprite* getSprite(const Piece& piece);
 
@@ -39,8 +40,7 @@ public:
 	void resizeBoard();
 	void setUItoGame(Game& game);
 	void movePiece(Piece& piece, int x, int y);
-	void
-		CreateRectanglesOfPossibleMoves(const std::unordered_set<Coordinates>& PossibleMoves);
+	void CreateRectanglesOfPossibleMoves(const std::unordered_set<Coordinates>& PossibleMoves);
 	void deleteRectanglesOfPossibleMoves();
 	sf::Vector2f indexToCoordinates(int row, int col);
 	std::pair<int, int> coordinatesToIndex(sf::Vector2i coordinates);

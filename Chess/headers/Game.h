@@ -15,8 +15,9 @@ class Game {
   Game();
   ~Game() = default;
   std::shared_ptr<Piece> getPieceByCoordinates(int row, int col);
-  bool move(std::shared_ptr<Piece> piece, int row, int col);
+  void move(std::shared_ptr<Piece> piece, int row, int col);
   const void isCheck();
+  void resetJustMadeFirstMove();
   bool promotion = false;
 
   Board::Iterator begin();

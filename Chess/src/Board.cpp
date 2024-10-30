@@ -51,6 +51,7 @@ void Board::createPromotionPiece(std::string pieceName) {
 	else if (pieceName == "bishop") {
 		board[Promotion.row][Promotion.col] = std::make_shared<Bishop>(Promotion.row, Promotion.col, !this->isWhiteTurn);
 	}
+	board[Promotion.row][Promotion.col]->gotMoved = true;
 }
 
 std::array<std::shared_ptr<Piece>, 8>& Board::operator[](int row) {

@@ -7,6 +7,7 @@
 #include "Queen.h"
 #include "Rook.h"
 
+#include <iostream>
 Game::Game() : board() {}
 
 std::shared_ptr<Piece> Game::getPieceByCoordinates(int row, int col) {
@@ -24,13 +25,13 @@ void Game::invalidateAllLegalMoves() {
 }
 
 
-bool Game::move(std::shared_ptr<Piece> piece, int row, int col) {
+bool Game::move(std::shared_ptr<Piece> piece, int row, int col) { //returns true if promotion
 	auto currentField = piece->getCurrentField();
 	if (piece->isWhite != this->board.isWhiteTurn) return false;
 
 	if (piece->move(row, col, board)) {  // change state in piece object
 		// reflect changes on board
-		
+
 		//short castle
 		if (piece->getName() == "king" && currentField.col + 2 == col) {
 			board[row][col + 1]->move(row, col - 1, board); //move rook as well
@@ -43,13 +44,25 @@ bool Game::move(std::shared_ptr<Piece> piece, int row, int col) {
 			board[row][col + 1] = board[row][col - 2];
 			board[row][col - 2] = nullptr;
 		}
+		//Promotion
+		else if (piece->getName() == "pawn" && row == 7 || row == 0) {
+			if (piece->isWhite) {
+				std::cout << "white promote!!" << std::endl;
+
+			}
+			else {
+				std::cout << "black promote!!" << std::endl;
+			}
+			board[currentField.row][currentField.col] = nullptr; //reset previous pos
+			board[row][col] = piece; //put piece to new position
+			return true;
+		}
 		board[currentField.row][currentField.col] = nullptr; //reset previous pos
 		board[row][col] = piece; //put piece to new position
-		
+
 		isCheck();
 		nextTurn();
 		invalidateAllLegalMoves();
-		return true;
 	}
 	return false;
 }

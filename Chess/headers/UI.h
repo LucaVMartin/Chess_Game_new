@@ -15,6 +15,9 @@ private:
   std::unordered_map<std::string, sf::Texture> textureByName;
   std::unordered_map<unsigned, sf::Sprite> spriteByPieceId;
   std::vector<sf::RectangleShape> RectanglesofPossibleMoves;
+  sf::RectangleShape BackgroundPromotion;
+  std::vector<sf::Sprite> PromotionPieces;
+
   Piece *movingPiece; // draw on top
   sf::Sprite createPieceSprite(const Piece &piece);
   void createBoard();
@@ -28,6 +31,7 @@ private:
   }
 
 public:
+  bool promote = false;
   UI(sf::RenderWindow *window, Game &game);
   ~UI() = default;
 
@@ -40,4 +44,7 @@ public:
   void deleteRectanglesOfPossibleMoves();
   sf::Vector2f indexToCoordinates(int row, int col);
   std::pair<int, int> coordinatesToIndex(sf::Vector2i coordinates);
+
+  void promotionUI(const bool color);
+  
 };

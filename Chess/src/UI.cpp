@@ -155,6 +155,7 @@ void UI::deleteRectanglesOfPossibleMoves() {
 
 void UI::promotionUI(const bool color) {
 	PromotionPieces.clear();
+	//create background rectangle
 	auto BackgroundSizeX = this->getWindowSize().x;
 	auto BackgroundSizeY = this->getWindowSize().y / 4;
 	BackgroundPromotion = sf::RectangleShape(sf::Vector2f(BackgroundSizeX, BackgroundSizeY));
@@ -163,6 +164,7 @@ void UI::promotionUI(const bool color) {
 	position.x = 0;
 	position.y = (this->getWindowSize().y - BackgroundSizeY) / 2;
 	BackgroundPromotion.setPosition(position);
+
 	// Promotion pieces
 	std::string PieceColor = color ? "white" : "black";
 

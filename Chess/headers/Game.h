@@ -14,6 +14,9 @@ class Game {
   Board board;
   Game();
   ~Game() = default;
+
+  void moveProcedure(std::shared_ptr<Piece> piece, int row, int col);
+
   std::shared_ptr<Piece> getPieceByCoordinates(int row, int col);
   void move(std::shared_ptr<Piece> piece, int row, int col);
   const void isCheck();

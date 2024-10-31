@@ -10,6 +10,14 @@
 #include <iostream>
 Game::Game() : board() {}
 
+void Game::moveProcedure(std::shared_ptr<Piece> piece, int row, int col) {
+	this->move(piece, row, col); //moves piece
+	this->resetJustMadeFirstMove(); //flag for possible enpassant
+	this->isCheck(); //check for check
+	this->nextTurn(); //toggles turn
+	this->invalidateAllLegalMoves(); //deletes all possible moves of the pieces
+}
+
 std::shared_ptr<Piece> Game::getPieceByCoordinates(int row, int col) {
 	return board[row][col];
 }
@@ -60,11 +68,6 @@ void Game::move(std::shared_ptr<Piece> piece, int row, int col) {
 
 		board[currentField.row][currentField.col] = nullptr; //reset previous pos
 		board[row][col] = piece; //put piece to new position
-
-		resetJustMadeFirstMove(); //for enpassant
-		isCheck();
-		nextTurn();
-		invalidateAllLegalMoves();
 	}
 }
 

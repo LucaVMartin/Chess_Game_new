@@ -33,7 +33,10 @@ void EventHandler::handleMouseButtonReleased(sf::Event& e) {
 			this->movingPiece = nullptr;
 			auto [row, col] =
 				ui.coordinatesToIndex({ e.mouseButton.x, e.mouseButton.y });
-			game.move(piece, row, col); //checks if promotion UI needs to be started
+
+			//moves piece, sets next turn, checks for check ...
+			game.moveProcedure(piece, row, col); 
+
 			if (game.promotion) {
 				ui.promotionUI(piece->isWhite);
 			}
@@ -68,6 +71,7 @@ void EventHandler::handleEvents() {
 		default:
 			break;
 		}
+		//moves grabbed pieces
 		auto mouse = sf::Mouse::getPosition(window);
 		if (this->movingPiece) {
 			auto windowSize = window.getSize();

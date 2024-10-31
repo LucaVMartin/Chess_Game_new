@@ -45,7 +45,7 @@ public:
 
   //member functions
       const Coordinates getCurrentField() const;
-      const std::unordered_set<Coordinates>& getLegalMoves(Board& board);
+      void setLegalMoves(Board& board);
   
       bool move(int row, int col, Board& board);
 

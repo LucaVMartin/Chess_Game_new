@@ -11,21 +11,19 @@ void Piece::invalidateLegalMoves() {
 	posMoves.clear();
 }
 
-const std::unordered_set<Coordinates>& Piece::getLegalMoves(Board& board) {
+void Piece::setLegalMoves(Board& board) {
 	calculatePossibleMoves(board);
 	removeCheckedMoves(board);
-	return posMoves;
 }
 
 bool Piece::move(int row, int col, Board& board) {
-	if (getLegalMoves(board).count({ row, col })) {
+	if (this->posMoves.count({ row, col })) {
 		if (!this->gotMoved) {
 			this->gotMoved = true;
 			this->justMadeFirstMove = true; //important for enpassant
 		}
 
 		currentField = { row, col };
-		invalidateLegalMoves();
 		return true;
 	}
 	return false;
@@ -66,43 +64,48 @@ std::unordered_set<Coordinates> Piece::continuousMoveGenerator(
 	return moves;
 }
 void Piece::removeCheckedMoves(Board& board) {
-	auto currPiece = board[this->getCurrentField().row][this->getCurrentField().col];
+	//save pointer to current piece
+	auto PtrCurrPiece = board[this->getCurrentField().row][this->getCurrentField().col];
 	Coordinates kingpos;
-	std::vector<Coordinates> illegalMoves;
-	board[this->getCurrentField().row][this->getCurrentField().col] = nullptr;
+	std::vector<Coordinates> illegalMoves; //vector to save the illegal moves
+	board[this->getCurrentField().row][this->getCurrentField().col] = nullptr; //remove current piece
 	bool enpassant = false;
 	std::shared_ptr<Piece> saveEnpassantPiece;
-	for (auto& move : this->posMoves) {
 
+	//loop over all possible moves of current piece
+	for (auto& move : this->posMoves) {
+		
 		//Check if enpassant
-		if (currPiece->getName() == "pawn" && //check if it is a pawn
-			currPiece->getCurrentField().row == 3 + currPiece->isWhite && //check if white piece is in 4th /black piece in 3rd row 
+		if (this->getName() == "pawn" && //check if it is a pawn
+			this->getCurrentField().row == 3 + this->isWhite && //check if white piece is in 4th /black piece in 3rd row 
 			!board[move.row][move.col] && //check if move field is empty
-			currPiece->getCurrentField().col != move.col)//check if it is a diagonal move
+			this->getCurrentField().col != move.col)//check if it is a diagonal move
 		{
-			//save captured piece
-			saveEnpassantPiece = board[move.row - (currPiece->isWhite ? 1 : -1)][move.col];
-			board[move.row - (currPiece->isWhite ? 1 : -1)][move.col] = nullptr;
+			//save captured enpassant piece
+			saveEnpassantPiece = board[move.row - (this->isWhite ? 1 : -1)][move.col];
+			board[move.row - (this->isWhite ? 1 : -1)][move.col] = nullptr;
 			enpassant = true;
 		}
 
-		auto saveEnemyPiece = board[move.row][move.col];
-		board[move.row][move.col] = currPiece;//move current piece
-		//Set kingposition
-		if (currPiece->getName() == "king") {
+		auto saveEnemyPiece = board[move.row][move.col]; //save enemy piece which is removed if its a capture move
+		board[move.row][move.col] = PtrCurrPiece;//move current piece
+
+		//find kingposition
+		if (this->getName() == "king") {
 			//if king is moved
 			kingpos = move;
 		}
 		else {
 			//set right king
-			if (currPiece->isWhite)
+			if (this->isWhite)
 				kingpos = board.whiteKing->getCurrentField();
-			else if (!currPiece->isWhite)
+			else if (!this->isWhite)
 				kingpos = board.blackKing->getCurrentField();
 		}
+
 		//loop over enemy pieces and check if they put check king. if they do => remove move from possible moves
 		for (auto enemypiece : board) {
-			if (enemypiece->isWhite != currPiece->isWhite) { //only enemy pieces
+			if (enemypiece->isWhite != this->isWhite) { //only enemy pieces
 				enemypiece->calculatePossibleMoves(board);
 				for (auto& enemymove : enemypiece->posMoves) {
 					if (enemymove == kingpos) {//this mean the move would lead to check => not legal
@@ -116,9 +119,9 @@ void Piece::removeCheckedMoves(Board& board) {
 			}
 		}
 	exit:;
-		board[move.row][move.col] = saveEnemyPiece;
+		board[move.row][move.col] = saveEnemyPiece; //put enemy piece back
 		if (enpassant) {
-			board[move.row - (currPiece->isWhite ? 1 : -1)][move.col] = saveEnpassantPiece; //put captured piece back in 
+			board[move.row - (this->isWhite ? 1 : -1)][move.col] = saveEnpassantPiece; //put enpassant captured piece back in 
 			enpassant = false;
 		}
 	}
@@ -129,5 +132,5 @@ void Piece::removeCheckedMoves(Board& board) {
 	}
 
 
-	board[this->getCurrentField().row][this->getCurrentField().col] = currPiece; //reset position of current piece
+	board[this->getCurrentField().row][this->getCurrentField().col] = PtrCurrPiece; //reset position of current piece
 }

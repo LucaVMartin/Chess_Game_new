@@ -33,7 +33,7 @@ void King::calculatePossibleMoves(Board& board) {
 			for (auto enemypiece : board) {
 				if (enemypiece->isWhite != this->isWhite) { //only enemy pieces
 					enemypiece->calculatePossibleMoves(board);
-					for (auto& enemymove : enemypiece->posMoves) { //iterate over possible moves of enemy pieces
+					for (auto& enemymove : enemypiece->posMoves) {
 						if (enemymove == Coordinates(this->getCurrentField().row, this->getCurrentField().col + 1) ||
 							enemymove == Coordinates(this->getCurrentField().row, this->getCurrentField().col + 2)) {//one of the squares is not attacked
 							return;

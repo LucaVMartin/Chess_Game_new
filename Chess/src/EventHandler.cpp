@@ -18,7 +18,7 @@ void EventHandler::handleMouseButtonPressed(sf::Event& e) {
 
 		// Mark the fields of possible Moves green
 		if (this->movingPiece && this->movingPiece->isWhite == game.board.isWhiteTurn) {
-			auto PossibleMoves = this->movingPiece->getLegalMoves(game.board);
+			auto PossibleMoves = this->movingPiece->posMoves;
 			ui.CreateRectanglesOfPossibleMoves(PossibleMoves);
 		}
 	}
@@ -47,6 +47,9 @@ void EventHandler::handleMouseButtonReleased(sf::Event& e) {
 			std::string piece = ui.promotionSelector({ e.mouseButton.x, e.mouseButton.y });
 			if (piece == "nopiece") return;
 			game.board.createPromotionPiece(piece);
+			game.isCheck();
+			game.invalidateAllLegalMoves(); //deletes all possible moves of the pieces
+			game.calculateAllLegalMoves(); //calculates legal moves for all pieces
 			ui.deletePromotionUI();
 			game.promotion = false;
 			ui.setUItoGame(game);

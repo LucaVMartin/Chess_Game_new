@@ -15,10 +15,12 @@ Game::Game() : board() {
 void Game::moveProcedure(std::shared_ptr<Piece> piece, int row, int col) {
 	if (!this->move(piece, row, col)) return; //moves piece if possible
 	this->resetJustMadeFirstMove(); //flag for possible enpassant
-	this->isCheck(); //check for check
+	auto attackPiece = this->isCheck(); //check for check
 	this->nextTurn(); //toggles turn
 	this->invalidateAllLegalMoves(); //deletes all possible moves of the pieces
 	this->calculateAllLegalMoves(); //calculates legal moves for all pieces
+	auto test = this->checkGameEnd(attackPiece);
+	std::cout << test << std::endl;
 }
 
 
@@ -29,9 +31,28 @@ void Game::calculateAllLegalMoves() {
 	}
 }
 
-bool Game::checkGameEnd() {
-	//Checkmate
-	return false;
+std::string Game::checkGameEnd(std::shared_ptr<Piece> attackPiece) {
+	auto king = this->board.isWhiteTurn ? dynamic_cast<King*>(board.whiteKing.get()) : dynamic_cast<King*>(board.blackKing.get());
+	bool posmoves = false;
+	std::vector<Coordinates> squaresToBlock;
+
+	//check if there are possible moves (stalemate/checkmate)
+	for (auto ownPiece : board) {
+		if (ownPiece->isWhite == board.isWhiteTurn) {
+			if (!ownPiece->posMoves.size() == 0) {
+				posmoves = true;
+				break;
+			}
+		}
+	}
+	if (!posmoves) {
+		if (king->checked)
+			return std::string("Checkmate. ") + (king->isWhite ? "Black" : "White") + " wins!";//checkmate
+		else
+			return "Stalemate!";  // stalemate if no moves available
+	}
+
+	return "";
 }
 
 std::shared_ptr<Piece> Game::getPieceByCoordinates(int row, int col) {
@@ -89,7 +110,7 @@ bool Game::move(std::shared_ptr<Piece> piece, int row, int col) {
 	return false;
 }
 
-const void Game::isCheck() {
+const std::shared_ptr<Piece> Game::isCheck() {
 	//find king
 	std::shared_ptr<Piece> king;
 	if (this->board.isWhiteTurn) {
@@ -103,15 +124,16 @@ const void Game::isCheck() {
 
 	for (auto enemypiece : board) {
 		if (enemypiece->isWhite == this->board.isWhiteTurn) { //only enemy pieces
-			//enemypiece->calculatePossibleMoves(board);
+			enemypiece->calculatePossibleMoves(board);
 			for (auto& enemymove : enemypiece->posMoves) {
 				if (enemymove == king->getCurrentField()) {//checks if move points to king => check
 					dynamic_cast<King*>(king.get())->checked = true;
-					return;
+					return enemypiece;
 				}
 			}
 		}
 	}
+	return nullptr;
 }
 
 void Game::resetJustMadeFirstMove() {

@@ -48,4 +48,5 @@ public:
 	void promotionUI(const bool color);
 	void deletePromotionUI();
 	std::string promotionSelector(sf::Vector2i mouseCoordinates);
+	void drawBoardtest(Board&);
 };

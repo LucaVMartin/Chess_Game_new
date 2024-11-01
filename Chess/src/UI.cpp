@@ -91,10 +91,10 @@ void UI::drawBoard() {
 		window->draw(Rectangle);
 	}
 	// Draw selection for Promotion
-		window->draw(BackgroundPromotion);
-		for (auto& promPiece : PromotionPieces) {
-			window->draw(promPiece);
-		}
+	window->draw(BackgroundPromotion);
+	for (auto& promPiece : PromotionPieces) {
+		window->draw(promPiece);
+	}
 }
 
 sf::Texture* UI::getTexture(const Piece& piece) {
@@ -231,4 +231,32 @@ std::string UI::promotionSelector(sf::Vector2i mouseCoordinates) {
 		}
 	}
 	return "nopiece";
+}
+
+void UI::drawBoardtest(Board& visboard_) {
+	sf::Sprite newboard{};
+	newboard.setTexture(textureByName["board"]);
+	
+	//resizeboard
+	sf::Vector2f windowSize(window->getSize());
+	newboard.setScale(windowSize.x / board.getLocalBounds().width,
+		windowSize.y / board.getLocalBounds().height);
+
+	std::vector<sf::Sprite> Sprites;
+	Sprites.clear();
+	for (auto vispiece : visboard_) {//loops over pieces on board
+		auto sprite = createPieceSprite(*vispiece);
+		auto [row, col] = vispiece->getCurrentField();
+		auto coordinates = indexToCoordinates(row, col);
+		sprite.setPosition(coordinates);
+		Sprites.push_back(sprite);
+	}
+	//draw
+		// Draw Board
+	window->draw(newboard);
+	// Draw Figures
+	for (auto& sprite : Sprites) {
+		window->draw(sprite);
+	}
+	window->display();
 }

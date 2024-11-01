@@ -13,7 +13,7 @@ Game::Game() : board() {
 }
 
 void Game::moveProcedure(std::shared_ptr<Piece> piece, int row, int col) {
-	if (!this->move(piece, row, col)) return; //moves piece if possible
+	if (!this->board.move(piece, row, col)) return; //moves piece if possible
 	this->resetJustMadeFirstMove(); //flag for possible enpassant
 	auto attackPiece = this->isCheck(); //check for check
 	this->nextTurn(); //toggles turn
@@ -69,46 +69,6 @@ void Game::invalidateAllLegalMoves() {
 	}
 }
 
-
-bool Game::move(std::shared_ptr<Piece> piece, int row, int col) {
-	auto startSquare = piece->getCurrentField();
-	if (piece->isWhite != this->board.isWhiteTurn) return false;
-
-	if (piece->move(row, col, board)) {  // change state in piece object
-		// reflect changes on board
-
-		//short castle
-		if (piece->getName() == "king" && startSquare.col + 2 == col) {
-			board[row][col + 1]->move(row, col - 1, board); //move rook as well
-			board[row][col - 1] = board[row][col + 1];
-			board[row][col + 1] = nullptr;
-		}
-		//long castle
-		else if (piece->getName() == "king" && startSquare.col - 2 == col) {
-			board[row][col - 2]->move(row, col + 1, board); //move rook as well
-			board[row][col + 1] = board[row][col - 2];
-			board[row][col - 2] = nullptr;
-		}
-		//Promotion
-		else if (piece->getName() == "pawn" && (row == 7 || row == 0)) {
-			board.Promotion.col = col;
-			board.Promotion.row = row;
-			this->promotion = true;
-		}
-		//enpassant
-		else if (piece->getName() == "pawn" && //check if it is a pawn
-			piece->getCurrentField().row == (piece->isWhite ? 5 : 2) && //check if white piece is in 5th /black piece in 2rd row 
-			!board[row][col] && //check if move field is empty
-			piece->getCurrentField().col != startSquare.col) { //check if diagonal move
-			board[row - (piece->isWhite ? 1 : -1)][col] = nullptr;
-		}
-
-		board[startSquare.row][startSquare.col] = nullptr; //reset previous pos
-		board[row][col] = piece; //put piece to new position
-		return true;
-	}
-	return false;
-}
 
 const std::shared_ptr<Piece> Game::isCheck() {
 	//find king

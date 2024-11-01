@@ -9,7 +9,7 @@
 void EventHandler::handleMouseButtonPressed(sf::Event& e) {
 
 	if (e.mouseButton.button == sf::Mouse::Left) {
-		if (game.promotion) {
+		if (game.board.promotion) {
 			return;
 		}
 
@@ -37,13 +37,13 @@ void EventHandler::handleMouseButtonReleased(sf::Event& e) {
 			//moves piece, sets next turn, checks for check ...
 			game.moveProcedure(piece, row, col); 
 
-			if (game.promotion) {
+			if (game.board.promotion) {
 				ui.promotionUI(piece->isWhite);
 			}
 			ui.setUItoGame(game);
 			return;
 		}
-		if (game.promotion) {
+		if (game.board.promotion) {
 			std::string piece = ui.promotionSelector({ e.mouseButton.x, e.mouseButton.y });
 			if (piece == "nopiece") return;
 			game.board.createPromotionPiece(piece);
@@ -51,7 +51,7 @@ void EventHandler::handleMouseButtonReleased(sf::Event& e) {
 			game.invalidateAllLegalMoves(); //deletes all possible moves of the pieces
 			game.calculateAllLegalMoves(); //calculates legal moves for all pieces
 			ui.deletePromotionUI();
-			game.promotion = false;
+			game.board.promotion = false;
 			ui.setUItoGame(game);
 		}
 	}

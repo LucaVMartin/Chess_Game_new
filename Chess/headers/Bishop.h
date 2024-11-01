@@ -3,10 +3,11 @@
 #include "Piece.h"
 
 class Bishop : public Piece {
- public:
-  using Piece::Piece;
-  const std::string getName() const override { return "bishop"; }
+public:
+	Bishop(int row, int col, bool isWhite) : Piece(row, col, isWhite, 3) {};
+	using Piece::Piece;
+	const std::string getName() const override { return "bishop"; }
 
- protected:
-  void calculatePossibleMoves(Board& board) override;
+protected:
+	void calculatePossibleMoves(Board& board) override;
 };

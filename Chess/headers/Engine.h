@@ -1,4 +1,5 @@
 #pragma once
+#include <SFML/Graphics.hpp>
 #include <memory>
 #include "Piece.h"
 #include "Board.h"
@@ -16,10 +17,11 @@ class Engine {
 	
 	public:
 		//Move findBestMove(Board &board, int depth);
-		int createTree(Board& board, int depth);
+		int createTree(Board& board, int depth, int& counter, sf::RenderWindow& renderwind);
+		int createNoCopyTree(Board& board, int depth, int& counter, sf::RenderWindow& wind);
 	    //int totalCalcDepth;
 	private:
-		const void visualizeBoard(Board& board);
+		void visualizeBoard(sf::RenderWindow& windowEngine, Board& board);
 		int evalPosition(Board& board);
 
 };

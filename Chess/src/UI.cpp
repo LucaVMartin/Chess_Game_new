@@ -29,6 +29,12 @@ UI::UI(sf::RenderWindow* window, Game& game) : window(window) {
 	createBoard();
 	setUItoGame(game);
 }
+
+UI::UI(sf::RenderWindow* window) : window(window) {
+	_loadAllTextures();
+	createBoard();
+}
+
 void UI::_loadAllTextures() {
 	// requires all textures to be in /Images and have an appropiate naming scheme
 	auto pieceNames = { "pawn",  "rook",   "bishop", "knight",
@@ -233,7 +239,7 @@ std::string UI::promotionSelector(sf::Vector2i mouseCoordinates) {
 	return "nopiece";
 }
 
-void UI::drawBoardtest(Board& visboard_) {
+void UI::drawBoardtest(Board& visboard_, sf::RenderWindow& window_) {
 	sf::Sprite newboard{};
 	newboard.setTexture(textureByName["board"]);
 	
@@ -253,10 +259,10 @@ void UI::drawBoardtest(Board& visboard_) {
 	}
 	//draw
 		// Draw Board
-	window->draw(newboard);
+	window_.draw(newboard);
 	// Draw Figures
 	for (auto& sprite : Sprites) {
-		window->draw(sprite);
+		window_.draw(sprite);
 	}
-	window->display();
+	//window_.display();
 }

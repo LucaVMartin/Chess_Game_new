@@ -1,6 +1,6 @@
 #include "Engine.h"
 #include <SFML/Graphics.hpp>
-
+#include <iostream>
 #include "EventHandler.h"
 #include "Game.h"
 #include "UI.h"
@@ -14,8 +14,9 @@ int main(){
     UI ui{ &window, game };
 
     Engine eng_test;
-
-    eng_test.createTree(game.board,10);
+    int ctr = 0;
+    auto counter = eng_test.createTree(game.board,5,ctr,window);
+    std::cout << "Number of Positions: " << counter;
 
     // run Program as long as window is open
     return 0;

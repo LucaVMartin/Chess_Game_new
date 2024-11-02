@@ -29,10 +29,11 @@ class Board;
 class Piece {
 private:
 	static inline unsigned counter = 0; //to set the id of the piece (counter gets incremented when a Piece is constructed)
-	Coordinates currentField = { 0, 0 };  // index in 2-dim array
+	  // index in 2-dim array
 
 public:
 	//member variables
+	Coordinates currentField = { 0, 0 };
 	const int pieceval;
 	const bool isWhite = true;
 	const unsigned id;
@@ -53,9 +54,10 @@ public:
 	virtual const std::string getName() const = 0;
 	virtual void calculatePossibleMoves(Board& board) = 0;
 	virtual void invalidateLegalMoves();
-
+	
 	//For queen, rook, bishop, King(king might be changed since it is unnecessary here)
 	std::unordered_set<Coordinates> continuousMoveGenerator(
 		Board& board, std::unordered_set<Coordinates> directions, int maxMoveLength = -1);
 	void removeCheckedMoves(Board& board);
+	virtual std::shared_ptr<Piece> clone() const = 0;
 };

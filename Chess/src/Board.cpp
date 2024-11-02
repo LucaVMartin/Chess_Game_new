@@ -53,12 +53,6 @@ Board::Board(const Board& other)
 				}
 				else if (other.board[row][col]->getName() == "knight") {
 					board[row][col] = std::make_shared<Knight>(*dynamic_cast<Knight*>(other.board[row][col].get()));
-					if (board[row][col]->isWhite) {
-						whiteKing = board[row][col];
-					}
-					else if (!(board[row][col]->isWhite)) {
-						blackKing = board[row][col];
-					}
 				}
 				else if (other.board[row][col]->getName() == "bishop") {
 					board[row][col] = std::make_shared<Bishop>(*dynamic_cast<Bishop*>(other.board[row][col].get()));
@@ -68,6 +62,12 @@ Board::Board(const Board& other)
 				}
 				else if (other.board[row][col]->getName() == "king") {
 					board[row][col] = std::make_shared<King>(*dynamic_cast<King*>(other.board[row][col].get()));
+					if (board[row][col]->isWhite) {
+						whiteKing = board[row][col];
+					}
+					else if (!(board[row][col]->isWhite)) {
+						blackKing = board[row][col];
+					}
 				}
 			}
 		}

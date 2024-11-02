@@ -2,8 +2,8 @@
 #include <stdexcept>
 #include "Board.h"
 
-Piece::Piece(int row, int col, bool isWhite)
-	: isWhite(isWhite), id(counter++), currentField({ row, col }) {}
+Piece::Piece(int row, int col, bool isWhite, int pieceval_)
+	: isWhite(isWhite), id(counter++), currentField({ row, col }),pieceval(pieceval_) {}
 
 const Coordinates Piece::getCurrentField() const { return currentField; }
 
@@ -12,6 +12,7 @@ void Piece::invalidateLegalMoves() {
 }
 
 void Piece::setLegalMoves(Board& board) {
+	this->invalidateLegalMoves();
 	calculatePossibleMoves(board);
 	removeCheckedMoves(board);
 }

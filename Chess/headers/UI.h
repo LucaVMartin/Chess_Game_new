@@ -34,6 +34,7 @@ private:
 
 public:
 	UI(sf::RenderWindow* window, Game& game);
+	UI(sf::RenderWindow* window);
 	~UI() = default;
 
 	void drawBoard();
@@ -48,5 +49,5 @@ public:
 	void promotionUI(const bool color);
 	void deletePromotionUI();
 	std::string promotionSelector(sf::Vector2i mouseCoordinates);
-	void drawBoardtest(Board&);
+    void drawBoardtest(Board&, sf::RenderWindow& window_);
 };

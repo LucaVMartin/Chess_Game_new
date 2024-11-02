@@ -14,7 +14,6 @@ Game::Game() : board() {
 
 void Game::moveProcedure(std::shared_ptr<Piece> piece, int row, int col) {
 	if (!this->board.move(piece, row, col)) return; //moves piece if possible
-	this->resetJustMadeFirstMove(); //flag for possible enpassant
 	auto attackPiece = this->isCheck(); //check for check
 	this->nextTurn(); //toggles turn
 	this->invalidateAllLegalMoves(); //deletes all possible moves of the pieces
@@ -94,14 +93,6 @@ const std::shared_ptr<Piece> Game::isCheck() {
 		}
 	}
 	return nullptr;
-}
-
-void Game::resetJustMadeFirstMove() {
-	for (auto enemypiece : board) {
-		if (enemypiece->isWhite != this->board.isWhiteTurn && enemypiece->getName() == "pawn") {
-			enemypiece->justMadeFirstMove = false;
-		}
-	}
 }
 
 Board::Iterator Game::begin() { return board.begin(); }

@@ -79,7 +79,7 @@ bool Board::move(std::shared_ptr<Piece> piece, int row, int col) {
 	if (piece->isWhite != this->isWhiteTurn) return false;
 
 	if (piece->move(row, col, *this)) {  // change state in piece object
-		// reflect changes on board
+		
 
 		//short castle
 		if (piece->getName() == "king" && startSquare.col + 2 == col) {
@@ -104,11 +104,13 @@ bool Board::move(std::shared_ptr<Piece> piece, int row, int col) {
 			piece->getCurrentField().row == (piece->isWhite ? 5 : 2) && //check if white piece is in 5th /black piece in 2rd row 
 			!board[row][col] && //check if move field is empty
 			piece->getCurrentField().col != startSquare.col) { //check if diagonal move
-			board[row - (piece->isWhite ? 1 : -1)][col] = nullptr;
+			enpassantctr++;
+			board[row - (piece->isWhite ? 1 : -1)][col] = nullptr;  //remove taken piece
 		}
 
 		board[startSquare.row][startSquare.col] = nullptr; //reset previous pos
 		board[row][col] = piece; //put piece to new position
+
 		return true;
 	}
 	return false;

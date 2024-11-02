@@ -38,7 +38,6 @@ public:
 	const bool isWhite = true;
 	const unsigned id;
 	bool gotMoved = false;
-	bool justMadeFirstMove = false;
 	std::unordered_set<Coordinates> posMoves{};
 
 	//Consructor&Destructor

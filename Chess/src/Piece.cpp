@@ -3,7 +3,7 @@
 #include "Board.h"
 
 Piece::Piece(int row, int col, bool isWhite, int pieceval_)
-	: isWhite(isWhite), id(counter++), currentField({ row, col }),pieceval(pieceval_) {}
+	: isWhite(isWhite), id(counter++), currentField({ row, col }), pieceval(pieceval_) {}
 
 const Coordinates Piece::getCurrentField() const { return currentField; }
 
@@ -21,9 +21,12 @@ bool Piece::move(int row, int col, Board& board) {
 	if (this->posMoves.count({ row, col })) {
 		if (!this->gotMoved) {
 			this->gotMoved = true;
-			this->justMadeFirstMove = true; //important for enpassant
+			board.firstMovedPiece = board[this->currentField.row][this->currentField.col];
+			//this->justMadeFirstMove = true; //important for enpassant
 		}
-
+		else {
+			board.firstMovedPiece = nullptr;
+		}
 		currentField = { row, col };
 		return true;
 	}
@@ -75,7 +78,7 @@ void Piece::removeCheckedMoves(Board& board) {
 
 	//loop over all possible moves of current piece
 	for (auto& move : this->posMoves) {
-		
+
 		//Check if enpassant
 		if (this->getName() == "pawn" && //check if it is a pawn
 			this->getCurrentField().row == 3 + this->isWhite && //check if white piece is in 4th /black piece in 3rd row 

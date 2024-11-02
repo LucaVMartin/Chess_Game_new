@@ -31,6 +31,7 @@ int Engine::createTree(Board& board, int depth, int& counter, sf::RenderWindow& 
 	static int originalDepth = -1;
 	static int numpos = 0;	
 	static int lastPrintedPercentage = -1;
+	int flag = 0;
 	if (originalDepth == -1) {
 		originalDepth = depth;
 		switch (originalDepth) {
@@ -79,11 +80,15 @@ int Engine::createTree(Board& board, int depth, int& counter, sf::RenderWindow& 
 						//minboard = newBoard;
 						minval = subtreevalue;
 					}
+					flag++;
 				}
 			}
 		}
 		//sf::RenderWindow windowEngine;
 		//visualizeBoard(windowEngine,minboard);
+		if (flag == 0) {
+			std::cout << "care!"<<std::endl;
+		}
 		return counter;
 	}
 }
@@ -122,7 +127,6 @@ int Engine::createNoCopyTree(Board& board, int depth, int& counter, sf::RenderWi
 					board[pieceCopy->getCurrentField().row][pieceCopy->getCurrentField().col] = piece;
 					board[piece->getCurrentField().row][piece->getCurrentField().col] = (saveEnemyPiece ? saveEnemyPiece : nullptr);
 					piece->gotMoved = pieceCopy->gotMoved;
-					piece->justMadeFirstMove = pieceCopy->justMadeFirstMove;
 					piece->posMoves = pieceCopy->posMoves;
 					piece->currentField = pieceCopy->currentField;
 					board.isWhiteTurn = !board.isWhiteTurn;

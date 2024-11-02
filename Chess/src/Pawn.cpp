@@ -36,7 +36,7 @@ void Pawn::calculatePossibleMoves(Board& board) {
 			if (row == (this->isWhite ? 5 : 2)) { //check if we are in correct row
 				if (board[row - sign][col]) { //check if there is a piece to capture enpassant
 					if (board[row - sign][col]->isWhite != this->isWhite && board[row - sign][col]->getName() == "pawn") { //check if it is a pawn
-						if (board[row - sign][col]->justMadeFirstMove) { //check if it just got moved
+						if (board[row - sign][col] == board.firstMovedPiece) { //check if it just got moved
 							insertMove = true;
 						}
 					}

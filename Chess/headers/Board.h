@@ -19,6 +19,8 @@ public:
 	bool isWhiteTurn = true;
 	std::shared_ptr<Piece> whiteKing;
 	std::shared_ptr<Piece> blackKing;
+	std::shared_ptr<Piece> firstMovedPiece;
+	static inline int enpassantctr = 0;
 
 	Board();
 	Board(const Board& other);

@@ -54,7 +54,7 @@ int Engine::createTree(Board& board, int depth, int& counter, sf::RenderWindow& 
 			lastPrintedPercentage = progressPercentage; // Update last printed percentage
 		}
 		//std::cout << counter << std::endl;
-		return evalPosition(board);
+		return counter;
 	}
 	else {
 		// calculate all possible moves
@@ -62,14 +62,21 @@ int Engine::createTree(Board& board, int depth, int& counter, sf::RenderWindow& 
 			if (pieceFromBoard->isWhite == board.isWhiteTurn)
 				pieceFromBoard->setLegalMoves(board);
 		}
+		//set/unset check
+		updateCheckStatus(board);
 
-		//std::vector<Board> boardvec;
 		int minval = -10000;
 		//Board minboard;
 		for (auto piece : board) {
 			if (piece->isWhite == board.isWhiteTurn) {
 				for (auto& move : piece->posMoves) {
+
 					Board newBoard = board;
+					//count captures for testing (only at leaf nodes)
+					if (depth == 1) {
+						this->countCaptures(board, move);
+					}
+					
 					newBoard.move(newBoard[piece->getCurrentField().row][piece->getCurrentField().col], move.row, move.col);
 					newBoard.isWhiteTurn = !newBoard.isWhiteTurn;
 					//visualize
@@ -143,5 +150,41 @@ int Engine::createNoCopyTree(Board& board, int depth, int& counter, sf::RenderWi
 		//sf::RenderWindow windowEngine;
 		//visualizeBoard(windowEngine,minboard);
 		return minval;
+	}
+}
+
+void Engine::updateCheckStatus(Board& board)
+{
+	std::shared_ptr<Piece> king;
+
+	// Determine which king to check
+	if (board.isWhiteTurn) {
+		king = board.blackKing;
+		dynamic_cast<King*>(board.whiteKing.get())->checked = false; // Set the white king as not checked
+	}
+	else {
+		king = board.whiteKing;
+		dynamic_cast<King*>(board.blackKing.get())->checked = false; // Set the black king as not checked
+	}
+
+	// Check if the king is in check
+	for (const auto& pieceFromBoard : board) {
+		if (pieceFromBoard->isWhite == board.isWhiteTurn) {
+			for (const auto& move : pieceFromBoard->posMoves) {
+				if (move == king->getCurrentField()) { // If a move points to the king
+					dynamic_cast<King*>(king.get())->checked = true; // Set the king as checked
+					checkctr++;
+					return; // Exit the function once we find the king is in check
+				}
+			}
+		}
+	}
+}
+
+void Engine::countCaptures(Board& board, Coordinates move)
+{
+	//count captures
+	if (board[move.row][move.col]) {
+		this->capturectr++; //does enpassent count as well?
 	}
 }

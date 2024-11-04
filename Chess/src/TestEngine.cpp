@@ -11,7 +11,7 @@ int main() {
 	sf::RenderWindow window(sf::VideoMode(800, 800), "My Window");
 	window.setFramerateLimit(30);
 	Game game{};
-	UI ui{ &window, game };
+	//UI ui{ &window, game };
 
 	Engine eng_test;
 	int ctr = 0;

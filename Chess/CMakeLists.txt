@@ -35,7 +35,7 @@ else()
 endif()
 
 # Set C++ standard
-set_property(TARGET chess PROPERTY CXX_STANDARD 20)
+#set_property(TARGET chess PROPERTY CXX_STANDARD 20)
 
 #copy image files into build folder after building
 add_custom_command(TARGET chess POST_BUILD
@@ -46,7 +46,6 @@ add_custom_command(TARGET chess POST_BUILD
 )
 #copy dll files into build folder after building
 set(SFML_DLL_DIR ${CMAKE_SOURCE_DIR}/bin)
-
 
 # Copy DLL files from bin folder to the output directory after building
 add_custom_command(TARGET chess POST_BUILD

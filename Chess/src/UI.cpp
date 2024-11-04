@@ -29,6 +29,12 @@ UI::UI(sf::RenderWindow* window, Game& game) : window(window) {
 	createBoard();
 	setUItoGame(game);
 }
+
+UI::UI(sf::RenderWindow* window) : window(window) {
+	_loadAllTextures();
+	createBoard();
+}
+
 void UI::_loadAllTextures() {
 	// requires all textures to be in /Images and have an appropiate naming scheme
 	auto pieceNames = { "pawn",  "rook",   "bishop", "knight",
@@ -91,10 +97,10 @@ void UI::drawBoard() {
 		window->draw(Rectangle);
 	}
 	// Draw selection for Promotion
-		window->draw(BackgroundPromotion);
-		for (auto& promPiece : PromotionPieces) {
-			window->draw(promPiece);
-		}
+	window->draw(BackgroundPromotion);
+	for (auto& promPiece : PromotionPieces) {
+		window->draw(promPiece);
+	}
 }
 
 sf::Texture* UI::getTexture(const Piece& piece) {
@@ -155,6 +161,7 @@ void UI::deleteRectanglesOfPossibleMoves() {
 
 void UI::promotionUI(const bool color) {
 	PromotionPieces.clear();
+	//create background rectangle
 	auto BackgroundSizeX = this->getWindowSize().x;
 	auto BackgroundSizeY = this->getWindowSize().y / 4;
 	BackgroundPromotion = sf::RectangleShape(sf::Vector2f(BackgroundSizeX, BackgroundSizeY));
@@ -163,6 +170,7 @@ void UI::promotionUI(const bool color) {
 	position.x = 0;
 	position.y = (this->getWindowSize().y - BackgroundSizeY) / 2;
 	BackgroundPromotion.setPosition(position);
+
 	// Promotion pieces
 	std::string PieceColor = color ? "white" : "black";
 
@@ -229,4 +237,32 @@ std::string UI::promotionSelector(sf::Vector2i mouseCoordinates) {
 		}
 	}
 	return "nopiece";
+}
+
+void UI::drawBoardtest(Board& visboard_, sf::RenderWindow& window_) {
+	sf::Sprite newboard{};
+	newboard.setTexture(textureByName["board"]);
+	
+	//resizeboard
+	sf::Vector2f windowSize(window->getSize());
+	newboard.setScale(windowSize.x / board.getLocalBounds().width,
+		windowSize.y / board.getLocalBounds().height);
+
+	std::vector<sf::Sprite> Sprites;
+	Sprites.clear();
+	for (auto vispiece : visboard_) {//loops over pieces on board
+		auto sprite = createPieceSprite(*vispiece);
+		auto [row, col] = vispiece->getCurrentField();
+		auto coordinates = indexToCoordinates(row, col);
+		sprite.setPosition(coordinates);
+		Sprites.push_back(sprite);
+	}
+	//draw
+		// Draw Board
+	window_.draw(newboard);
+	// Draw Figures
+	for (auto& sprite : Sprites) {
+		window_.draw(sprite);
+	}
+	//window_.display();
 }

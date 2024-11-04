@@ -1,7 +1,6 @@
 #include "Pawn.h"
 
 void Pawn::calculatePossibleMoves(Board& board) {
-	posMoves.clear();
 	auto boardSize = board.size();
 	auto sign =
 		isWhite ? 1 : -1;  // white moves in different direction than black
@@ -34,18 +33,20 @@ void Pawn::calculatePossibleMoves(Board& board) {
 		bool insertMove = false;
 		//en passant
 		if (this->gotMoved) {
-			if (board[row - sign][col]) {//check if there is a piece
-				if (board[row - sign][col]->isWhite != this->isWhite && board[row - sign][col]->getName() == "pawn") {
-					if (board[row - sign][col]->justMadeFirstMove) {
-						insertMove = true;
+			if (row == (this->isWhite ? 5 : 2)) { //check if we are in correct row
+				if (board[row - sign][col]) { //check if there is a piece to capture enpassant
+					if (board[row - sign][col]->isWhite != this->isWhite && board[row - sign][col]->getName() == "pawn") { //check if it is a pawn
+						if (board[row - sign][col] == board.firstMovedPiece) { //check if it just got moved
+							insertMove = true;
+						}
 					}
 				}
 			}
 		}
 
-		if (board[row][col]) {
+		if (board[row][col]) {// capture field has opponent piece
 			if (board[row][col]->isWhite != this->isWhite) insertMove = true;
-		};  // capture field is has opponent piece
+		};  
 
 		if (insertMove) posMoves.insert({ row, col });
 	}

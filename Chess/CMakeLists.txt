@@ -9,11 +9,11 @@ include_directories(${CMAKE_SOURCE_DIR}/Chess/src)     # New includes
 include_directories(${CMAKE_SOURCE_DIR}/Chess/headers)
 
 # Gather all source files in the src directory
-file(GLOB_RECURSE CHESS_SRC_FILES "src/*.cpp")
-list(REMOVE_ITEM CHESS_SRC_FILES ${CMAKE_SOURCE_DIR}/Chess/src/TestEngine.cpp) # Exclude TestEngine.cpp from chess
+file(GLOB_RECURSE SRC_FILES "src/*.cpp")
+message(STATUS "Source files found: ${SRC_FILES}")
 
-# Add the main chess executable (uses main.cpp)
-add_executable(chess ${CHESS_SRC_FILES})
+# Add source to this project's executable (named chess now).
+add_executable(chess ${SRC_FILES})
 
 # Link SFML libraries
 if(CMAKE_BUILD_TYPE MATCHES Debug)
@@ -53,46 +53,3 @@ add_custom_command(TARGET chess POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${SFML_DLL_DIR}
     $<TARGET_FILE_DIR:chess>)
-
-
-
-# Define source files for TestEngine executable
-file(GLOB_RECURSE TESTENGINE_SRC_FILES "src/*.cpp")
-list(REMOVE_ITEM TESTENGINE_SRC_FILES ${CMAKE_SOURCE_DIR}/Chess/src/main.cpp) # Exclude main.cpp from TestEngine
-# Add the TestEngine executable (uses TestEngine.cpp)
-add_executable(TestEngine ${TESTENGINE_SRC_FILES})
-
-# Link SFML libraries for TestEngine executable
-if(CMAKE_BUILD_TYPE MATCHES Debug)
-    target_link_libraries(TestEngine 
-        ${CMAKE_SOURCE_DIR}/lib/sfml-graphics-d.lib
-        ${CMAKE_SOURCE_DIR}/lib/sfml-audio-d.lib
-        ${CMAKE_SOURCE_DIR}/lib/sfml-network-d.lib
-        ${CMAKE_SOURCE_DIR}/lib/sfml-system-d.lib
-        ${CMAKE_SOURCE_DIR}/lib/sfml-window-d.lib
-    )
-else()
-    target_link_libraries(TestEngine 
-        ${CMAKE_SOURCE_DIR}/lib/sfml-graphics.lib
-        ${CMAKE_SOURCE_DIR}/lib/sfml-audio.lib
-        ${CMAKE_SOURCE_DIR}/lib/sfml-network.lib
-        ${CMAKE_SOURCE_DIR}/lib/sfml-system.lib
-        ${CMAKE_SOURCE_DIR}/lib/sfml-window.lib
-    )
-endif()
-
-# Set C++ standard for TestEngine executable
-set_property(TARGET TestEngine PROPERTY CXX_STANDARD 20)
-
-# Optionally copy resources for TestEngine, similar to chess
-add_custom_command(TARGET TestEngine POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory
-    $<TARGET_FILE_DIR:TestEngine>/Images
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/Chess/Images $<TARGET_FILE_DIR:TestEngine>/Images
-)
-add_custom_command(TARGET TestEngine POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${SFML_DLL_DIR}
-    $<TARGET_FILE_DIR:TestEngine>
-)

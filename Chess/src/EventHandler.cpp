@@ -9,7 +9,7 @@
 void EventHandler::handleMouseButtonPressed(sf::Event& e) {
 
 	if (e.mouseButton.button == sf::Mouse::Left) {
-		if (game.board.promotion) {
+		if (game.promotion) {
 			return;
 		}
 
@@ -18,7 +18,7 @@ void EventHandler::handleMouseButtonPressed(sf::Event& e) {
 
 		// Mark the fields of possible Moves green
 		if (this->movingPiece && this->movingPiece->isWhite == game.board.isWhiteTurn) {
-			auto PossibleMoves = this->movingPiece->posMoves;
+			auto PossibleMoves = this->movingPiece->getLegalMoves(game.board);
 			ui.CreateRectanglesOfPossibleMoves(PossibleMoves);
 		}
 	}
@@ -33,25 +33,19 @@ void EventHandler::handleMouseButtonReleased(sf::Event& e) {
 			this->movingPiece = nullptr;
 			auto [row, col] =
 				ui.coordinatesToIndex({ e.mouseButton.x, e.mouseButton.y });
-
-			//moves piece, sets next turn, checks for check ...
-			game.moveProcedure(piece, row, col); 
-
-			if (game.board.promotion) {
+			game.move(piece, row, col); //checks if promotion UI needs to be started
+			if (game.promotion) {
 				ui.promotionUI(piece->isWhite);
 			}
 			ui.setUItoGame(game);
 			return;
 		}
-		if (game.board.promotion) {
+		if (game.promotion) {
 			std::string piece = ui.promotionSelector({ e.mouseButton.x, e.mouseButton.y });
 			if (piece == "nopiece") return;
 			game.board.createPromotionPiece(piece);
-			game.isCheck();
-			game.invalidateAllLegalMoves(); //deletes all possible moves of the pieces
-			game.calculateAllLegalMoves(); //calculates legal moves for all pieces
 			ui.deletePromotionUI();
-			game.board.promotion = false;
+			game.promotion = false;
 			ui.setUItoGame(game);
 		}
 	}
@@ -74,7 +68,6 @@ void EventHandler::handleEvents() {
 		default:
 			break;
 		}
-		//moves grabbed pieces
 		auto mouse = sf::Mouse::getPosition(window);
 		if (this->movingPiece) {
 			auto windowSize = window.getSize();

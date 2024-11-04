@@ -26,6 +26,3 @@
 *.o
 *.log
 *.tmp
-
-#ignore googletest folders
-/packages/

@@ -14,11 +14,11 @@ Game::Game() : board() {
 
 void Game::moveProcedure(std::shared_ptr<Piece> piece, int row, int col) {
 	if (!this->board.move(piece, row, col)) return; //moves piece if possible
-	auto attackPiece = this->isCheck(); //check for check
+	this->isCheck(); //check for check
 	this->nextTurn(); //toggles turn
 	this->invalidateAllLegalMoves(); //deletes all possible moves of the pieces
 	this->calculateAllLegalMoves(); //calculates legal moves for all pieces
-	auto test = this->checkGameEnd(attackPiece);
+	auto test = this->checkGameEnd();
 	std::cout << test << std::endl;
 }
 
@@ -30,10 +30,9 @@ void Game::calculateAllLegalMoves() {
 	}
 }
 
-std::string Game::checkGameEnd(std::shared_ptr<Piece> attackPiece) {
+std::string Game::checkGameEnd() {
 	auto king = this->board.isWhiteTurn ? dynamic_cast<King*>(board.whiteKing.get()) : dynamic_cast<King*>(board.blackKing.get());
 	bool posmoves = false;
-	std::vector<Coordinates> squaresToBlock;
 
 	//check if there are possible moves (stalemate/checkmate)
 	for (auto ownPiece : board) {

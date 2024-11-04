@@ -113,8 +113,15 @@ void Piece::removeCheckedMoves(Board& board) {
 				enemypiece->calculatePossibleMoves(board);
 				for (auto& enemymove : enemypiece->posMoves) {
 					if (enemymove == kingpos) {//this mean the move would lead to check => not legal
-						illegalMoves.push_back(move);
-						goto exit;
+						if (enemypiece->getName() == "pawn" && enemypiece->currentField.col != kingpos.col && PtrCurrPiece->getName() == "king") {//sort out special case, where king couldnt move in front of a pawn
+							illegalMoves.push_back(move);
+						}
+						else if(!(enemypiece->getName() == "pawn"))
+						{
+							illegalMoves.push_back(move); //move would lead to check
+							goto exit;
+						}
+
 					}
 				}
 			}

@@ -17,4 +17,7 @@ project ("Chess_Game_new")
 add_subdirectory ("Chess")
 add_subdirectory("TestChess")
 
+#adress sanitizer
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -g")
+
 enable_testing()

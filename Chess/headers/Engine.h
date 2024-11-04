@@ -17,6 +17,7 @@ class Engine {
 	
 	public:
 		static inline int checkctr = 0;
+		static inline int checkmatectr = 0;
 		static inline int capturectr = 0;
 		//Move findBestMove(Board &board, int depth);
 		int createTree(Board& board, int depth, int& counter, sf::RenderWindow& renderwind);
@@ -25,6 +26,7 @@ class Engine {
 	private:
 		void visualizeBoard(sf::RenderWindow& windowEngine, Board& board);
 		int evalPosition(Board& board);
-		void updateCheckStatus(Board& board);
+		bool updateCheckStatus(Board& board);
 		void countCaptures(Board& board,Coordinates move);
+		void checkmateCounter(Board& board);
 };

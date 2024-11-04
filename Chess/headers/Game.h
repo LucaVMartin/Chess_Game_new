@@ -18,7 +18,7 @@ class Game {
   void moveProcedure(std::shared_ptr<Piece> piece, int row, int col);
   void invalidateAllLegalMoves();
   void calculateAllLegalMoves();
-  std::string checkGameEnd(std::shared_ptr<Piece> attackPiece);
+  std::string checkGameEnd();
   std::shared_ptr<Piece> getPieceByCoordinates(int row, int col);
   bool move(std::shared_ptr<Piece> piece, int row, int col);
   const std::shared_ptr<Piece> isCheck();

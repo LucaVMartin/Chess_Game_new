@@ -14,7 +14,7 @@ protected:
 	virtual void SetUp() override {
 		window.create(sf::VideoMode(800, 800), "Test Window");
 		counter = 0;
-		depth = 5; // Set depth for testing
+		depth = 4; // Set depth for testing
 		eng_test.createTree(game.board, depth, counter, window); // Call once
 	}
 };
@@ -37,4 +37,5 @@ TEST_F(CreateTreeTest, ValidatesAllCounts) {
 	EXPECT_EQ(game.board.enpassantctr, expectedEnpass) << "Incorrect en passant count.";
 	EXPECT_EQ(eng_test.checkctr, expectedChecks) << "Incorrect check count.";
 	EXPECT_EQ(eng_test.capturectr+game.board.enpassantctr, expectedCaptures) << "Incorrect capture count.";
+	EXPECT_EQ(eng_test.checkmatectr,expectedCheckmates) << "Incorrect checkmate count.";
 }

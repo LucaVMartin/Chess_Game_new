@@ -9,6 +9,7 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)  # For Windows users
 FetchContent_MakeAvailable(googletest)
 
+
 # Add include directories
 include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${CMAKE_SOURCE_DIR}/Chess/src)

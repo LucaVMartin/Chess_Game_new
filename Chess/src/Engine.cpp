@@ -29,7 +29,7 @@ int Engine::evalPosition(Board& board) {
 
 int Engine::createTree(Board& board, int depth, int& counter, sf::RenderWindow& wind) {
 	static int originalDepth = -1;
-	static int numpos = 0;	
+	static int numpos = 0;
 	static int lastPrintedPercentage = -1;
 	int flag = 0;
 	if (originalDepth == -1) {
@@ -44,9 +44,13 @@ int Engine::createTree(Board& board, int depth, int& counter, sf::RenderWindow& 
 		default: numpos = 0; break; // Handle invalid depths
 		}
 	}
-	
+
 	if (depth == 0) {
-		updateCheckStatus(board);
+		auto check = updateCheckStatus(board);
+		if (check) {
+			//check for checkmate;
+			this->checkmateCounter(board);
+		}
 		//visualizeBoard(wind, board);
 		counter++;
 		int progressPercentage = (counter * 100) / numpos;
@@ -76,7 +80,7 @@ int Engine::createTree(Board& board, int depth, int& counter, sf::RenderWindow& 
 					if (depth == 1) {
 						this->countCaptures(board, move);
 					}
-					
+
 					newBoard.move(newBoard[piece->getCurrentField().row][piece->getCurrentField().col], move.row, move.col);
 					newBoard.isWhiteTurn = !newBoard.isWhiteTurn;
 					//visualize
@@ -87,16 +91,11 @@ int Engine::createTree(Board& board, int depth, int& counter, sf::RenderWindow& 
 						//minboard = newBoard;
 						minval = subtreevalue;
 					}
-					flag++;
 				}
 			}
 		}
 		//sf::RenderWindow windowEngine;
 		//visualizeBoard(windowEngine,minboard);
-		if (flag == 0) {
-			std::cout << "care!"<<std::endl;
-		}
-		return counter;
 	}
 }
 
@@ -153,39 +152,65 @@ int Engine::createNoCopyTree(Board& board, int depth, int& counter, sf::RenderWi
 	}
 }
 
-void Engine::updateCheckStatus(Board& board)
+bool Engine::updateCheckStatus(Board& board)
 {
 	std::shared_ptr<Piece> king;
 
 	// Determine which king to check
 	if (board.isWhiteTurn) {
 		king = board.whiteKing;
-		dynamic_cast<King*>(board.blackKing.get())->checked = false; // Set the white king as not checked
+		auto blackKingPtr = dynamic_cast<King*>(board.blackKing.get());
+		if (!blackKingPtr) {
+			throw std::runtime_error("Error: Black king is not a valid King or is null.");
+		}
+		blackKingPtr->checked = false; // Set the white king as not checked
 	}
 	else {
 		king = board.blackKing;
-		dynamic_cast<King*>(board.whiteKing.get())->checked = false; // Set the black king as not checked
+		auto whiteKingPtr = dynamic_cast<King*>(board.whiteKing.get());
+		if (!whiteKingPtr) {
+			throw std::runtime_error("Error: White king is not a valid King or is null.");
+		}
+		whiteKingPtr->checked = false; // Set the black king as not checked
 	}
 
-	//calculate possible moves of enemy pieces
+	// Calculate possible moves of enemy pieces
 	for (auto pieceFromBoard : board) {
-		if (pieceFromBoard->isWhite != board.isWhiteTurn)
-			pieceFromBoard->setLegalMoves(board);
+		if (pieceFromBoard) {
+			if (pieceFromBoard->isWhite != board.isWhiteTurn) {
+				pieceFromBoard->setLegalMoves(board);
+			}
+		}
+		else {
+			throw std::runtime_error("Error: Piece from board is null.");
+		}
 	}
 
 	// Check if the king is in check
 	for (const auto& pieceFromBoard : board) {
-		if (pieceFromBoard->isWhite != board.isWhiteTurn) {
-			for (const auto& move : pieceFromBoard->posMoves) {
-				if (move == king->getCurrentField()) { // If a move points to the king
-					dynamic_cast<King*>(king.get())->checked = true; // Set the king as checked
-					checkctr++;
-					return; // Exit the function once we find the king is in check
+		if (pieceFromBoard) {
+			if (pieceFromBoard->isWhite != board.isWhiteTurn) {
+				for (const auto& move : pieceFromBoard->posMoves) {
+					if (king) {
+						if (move == king->getCurrentField()) { // If a move points to the king
+							dynamic_cast<King*>(king.get())->checked = true; // Set the king as checked
+							checkctr++;
+							return true; // Exit the function once we find the king is in check
+						}
+					}
+					else {
+						throw std::runtime_error("Error: King pointer is null.");
+					}
 				}
 			}
 		}
+		else {
+			throw std::runtime_error("Error: Piece from board is null.");
+		}
 	}
+	return false;
 }
+
 
 void Engine::countCaptures(Board& board, Coordinates move)
 {
@@ -193,4 +218,22 @@ void Engine::countCaptures(Board& board, Coordinates move)
 	if (board[move.row][move.col]) {
 		this->capturectr++; //does enpassent count as well?
 	}
+}
+
+void Engine::checkmateCounter(Board& board)
+{
+	auto king = board.isWhiteTurn ? dynamic_cast<King*>(board.whiteKing.get()) : dynamic_cast<King*>(board.blackKing.get());
+	bool posmoves = false;
+
+	//check if there are possible moves (stalemate/checkmate)
+	for (auto ownPiece : board) {
+		if (ownPiece->isWhite == board.isWhiteTurn) {
+			ownPiece->setLegalMoves(board); //calculate legal moves for own piece
+			if (!ownPiece->posMoves.size() == 0) {
+				return;//if there is a legal move, game is not over
+			}
+		}
+	}
+	//since we already know that the king is checked, we can assume this is checkmate
+	checkmatectr++;
 }

@@ -35,6 +35,6 @@ TEST_F(CreateTreeTest, ValidatesAllCounts) {
 	// Assertions for all counts in one test
 	EXPECT_EQ(counter, expectedNumpos) << "Incorrect position count.";
 	EXPECT_EQ(game.board.enpassantctr, expectedEnpass) << "Incorrect en passant count.";
-	//EXPECT_EQ(eng_test.checkctr, expectedChecks) << "Incorrect check count.";
+	EXPECT_EQ(eng_test.checkctr, expectedChecks) << "Incorrect check count.";
 	EXPECT_EQ(eng_test.capturectr+game.board.enpassantctr, expectedCaptures) << "Incorrect capture count.";
 }

@@ -46,6 +46,8 @@ int Engine::createTree(Board& board, int depth, int& counter, sf::RenderWindow& 
 	}
 	
 	if (depth == 0) {
+		updateCheckStatus(board);
+		//visualizeBoard(wind, board);
 		counter++;
 		int progressPercentage = (counter * 100) / numpos;
 		// Check if the progress percentage is a multiple of 5 and hasn't been printed yet
@@ -62,8 +64,6 @@ int Engine::createTree(Board& board, int depth, int& counter, sf::RenderWindow& 
 			if (pieceFromBoard->isWhite == board.isWhiteTurn)
 				pieceFromBoard->setLegalMoves(board);
 		}
-		//set/unset check
-		updateCheckStatus(board);
 
 		int minval = -10000;
 		//Board minboard;
@@ -159,17 +159,23 @@ void Engine::updateCheckStatus(Board& board)
 
 	// Determine which king to check
 	if (board.isWhiteTurn) {
-		king = board.blackKing;
-		dynamic_cast<King*>(board.whiteKing.get())->checked = false; // Set the white king as not checked
+		king = board.whiteKing;
+		dynamic_cast<King*>(board.blackKing.get())->checked = false; // Set the white king as not checked
 	}
 	else {
-		king = board.whiteKing;
-		dynamic_cast<King*>(board.blackKing.get())->checked = false; // Set the black king as not checked
+		king = board.blackKing;
+		dynamic_cast<King*>(board.whiteKing.get())->checked = false; // Set the black king as not checked
+	}
+
+	//calculate possible moves of enemy pieces
+	for (auto pieceFromBoard : board) {
+		if (pieceFromBoard->isWhite != board.isWhiteTurn)
+			pieceFromBoard->setLegalMoves(board);
 	}
 
 	// Check if the king is in check
 	for (const auto& pieceFromBoard : board) {
-		if (pieceFromBoard->isWhite == board.isWhiteTurn) {
+		if (pieceFromBoard->isWhite != board.isWhiteTurn) {
 			for (const auto& move : pieceFromBoard->posMoves) {
 				if (move == king->getCurrentField()) { // If a move points to the king
 					dynamic_cast<King*>(king.get())->checked = true; // Set the king as checked

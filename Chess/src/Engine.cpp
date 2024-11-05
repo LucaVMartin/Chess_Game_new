@@ -29,7 +29,7 @@ int Engine::evalPosition(Board& board) {
 		//check for checkmate
 		if (check || updateCheckStatus(board)) {
 			checkmatectr++;
-			return (board.isWhiteTurn ? (INT_MAX-1) : (INT_MIN+1)); //return high/low value if checkmate
+			return (board.isWhiteTurn ? (-INT_MAX) : (INT_MAX)); //return high/low value if checkmate
 		}
 		else
 		{

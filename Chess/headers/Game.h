@@ -11,7 +11,6 @@ private:
 	void nextTurn() { board.isWhiteTurn = !board.isWhiteTurn; }
 
 public:
-	Move bestMove_;
 	const bool playEngine;
 	Board board;
 	Engine engine;

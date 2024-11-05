@@ -61,7 +61,7 @@ int Engine::giveNumPos(int depth) {
 	return numpos;
 }
 
-int Engine::createTree(Board& board, int depth, Move& bestMove) {
+evalMove Engine::createTree(Board& board, int depth) {
 	int flagGameEnd = 0; //flag to check for game ends before leaf node
 	static int originalDepth = -1;
 	static int numpos = 0;
@@ -76,7 +76,6 @@ int Engine::createTree(Board& board, int depth, Move& bestMove) {
 		{
 			positionctr++;
 			//visualizeBoard(wind, board);
-			//add return 0 for stalemate
 			int progressPercentage = (positionctr * 100) / numpos;
 			// Check if the progress percentage is a multiple of 5 and hasn't been printed yet
 			if (progressPercentage % 5 == 0 && progressPercentage != lastPrintedPercentage) {
@@ -86,8 +85,7 @@ int Engine::createTree(Board& board, int depth, Move& bestMove) {
 		}
 
 		//std::cout << positionctr << std::endl;
-		auto eval = this->evalPosition(board);
-		return eval; //return board value 
+		return evalMove(Move(), this->evalPosition(board)); //return board value 
 	}
 	else {
 		// calculate all possible moves
@@ -95,27 +93,34 @@ int Engine::createTree(Board& board, int depth, Move& bestMove) {
 			if (pieceFromBoard->isWhite == board.isWhiteTurn)
 				pieceFromBoard->setLegalMoves(board);
 		}
-
-		int max = INT_MIN;
+;
+		evalMove best;
+		best.score = INT_MIN;
 		//Board minboard;
 		for (auto piece : board) {
 			if (piece->isWhite == board.isWhiteTurn) {
 				for (auto& move : piece->posMoves) {
 					Board newBoard = board;
-					if (depth == 1 && this->testing) {
+					if (this->testing && depth == 1  ) {
 						this->countCaptures(board, move);//count captures for testing (only at leaf nodes)
 					}
+					curr_move.moveCoords = move;
+					curr_move.pieceCoords = piece->getCurrentField();
 					newBoard.move(newBoard[piece->getCurrentField().row][piece->getCurrentField().col], move.row, move.col);
 					newBoard.isWhiteTurn = !newBoard.isWhiteTurn;
 					//visualize					
 					//visualizeBoard(this->wind, newBoard);
-					auto eval = -createTree(newBoard, depth - 1, bestMove); //call recursion
 
-					if (eval >= max) {
-						max = eval;
-						bestMove.moveCoords = move;
-						bestMove.pieceCoords.row = piece->getCurrentField().row;
-						bestMove.pieceCoords.col = piece->getCurrentField().col;
+					auto result = createTree(newBoard, depth - 1);
+					/*result.move.moveCoords = move;
+					auto.move.pieceCoords = piece->getCurrentField();*/
+					result.score = -result.score;
+					
+
+					if (result.score > best.score) {
+						best.score = result.score;
+						best.move.moveCoords = move;
+						best.move.pieceCoords = piece->getCurrentField();
 					}
 					flagGameEnd++; // to check if no move was done;
 				}
@@ -129,11 +134,12 @@ int Engine::createTree(Board& board, int depth, Move& bestMove) {
 			//visualizeBoard(wind, board);
 			if (check) {
 				std::cout << "checkmate before leaf node" << std::endl;
-				return (board.isWhiteTurn ? INT_MAX : INT_MIN);
+				best.score = INT_MAX;
+				best.move = curr_move;
 			}
-			else { std::cout << "stalemate before leaf node" << std::endl; return 0; }
+			else { std::cout << "stalemate before leaf node" << std::endl; }
 		}
-		return max;
+		return best;
 	}
 }
 

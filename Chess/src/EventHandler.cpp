@@ -14,7 +14,10 @@ void EventHandler::handleMouseButtonPressed(sf::Event& e) {
 		}
 
 		auto [row, col] = ui.coordinatesToIndex({ e.mouseButton.x, e.mouseButton.y });
-		this->movingPiece = game.getPieceByCoordinates(row, col);
+		if (row < 8 && row >= 0 && col >= 0 && col < 8)
+			this->movingPiece = game.getPieceByCoordinates(row, col);
+		else
+			this->movingPiece = nullptr;
 
 		// Mark the fields of possible Moves green
 		if (this->movingPiece && this->movingPiece->isWhite == game.board.isWhiteTurn) {
@@ -26,7 +29,7 @@ void EventHandler::handleMouseButtonPressed(sf::Event& e) {
 
 void EventHandler::handleMouseButtonReleased(sf::Event& e) {
 	if (e.mouseButton.button == sf::Mouse::Left) {
-		
+
 		if (this->movingPiece) {
 			ui.deleteRectanglesOfPossibleMoves();
 			auto piece = this->movingPiece;
@@ -35,7 +38,7 @@ void EventHandler::handleMouseButtonReleased(sf::Event& e) {
 				ui.coordinatesToIndex({ e.mouseButton.x, e.mouseButton.y });
 
 			//moves piece, sets next turn, checks for check ...
-			game.moveProcedure(piece, row, col); 
+			game.moveProcedure(piece, row, col);
 
 			if (game.board.promotion) {
 				ui.promotionUI(piece->isWhite);

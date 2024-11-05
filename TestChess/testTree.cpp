@@ -10,13 +10,11 @@ public:
 	sf::RenderWindow window;
 	int counter;
 	int depth;
-	Move best;
 
 	virtual void SetUp() override {
 		eng_test = new Engine(true);
 		depth = 4; // Set depth for testing
-		auto best_val = eng_test->createTree(game.board, depth, best); // Call once
-		std::cout << best_val << std::endl;
+		eng_test->createTree(game.board, depth); // Call once
 	}
 	virtual void TearDown() override {
 		delete eng_test; // Clean up after test

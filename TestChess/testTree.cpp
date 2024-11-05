@@ -10,12 +10,14 @@ protected:
 	sf::RenderWindow window;
 	int counter;
 	int depth;
+	Move best;
 
 	virtual void SetUp() override {
 		window.create(sf::VideoMode(800, 800), "Test Window");
-		counter = 0;
-		depth = 4; // Set depth for testing
-		eng_test.createTree(game.board, depth, counter, window); // Call once
+		window.setFramerateLimit(30);
+		depth = 3; // Set depth for testing
+		auto best_val = eng_test.createTree(game.board, depth, window,best); // Call once
+		std::cout << best_val << std::endl;
 	}
 };
 
@@ -33,7 +35,7 @@ TEST_F(CreateTreeTest, ValidatesAllCounts) {
 	}
 
 	// Assertions for all counts in one test
-	EXPECT_EQ(counter, expectedNumpos) << "Incorrect position count.";
+	EXPECT_EQ(eng_test.positionctr, expectedNumpos) << "Incorrect position count.";
 	EXPECT_EQ(game.board.enpassantctr, expectedEnpass) << "Incorrect en passant count.";
 	EXPECT_EQ(eng_test.checkctr, expectedChecks) << "Incorrect check count.";
 	EXPECT_EQ(eng_test.capturectr+game.board.enpassantctr, expectedCaptures) << "Incorrect capture count.";

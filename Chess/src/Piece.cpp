@@ -90,8 +90,11 @@ void Piece::removeCheckedMoves(Board& board) {
 			board[move.row - (this->isWhite ? 1 : -1)][move.col] = nullptr;
 			enpassant = true;
 		}
-
-		auto saveEnemyPiece = board[move.row][move.col]; //save enemy piece which is removed if its a capture move
+		std::shared_ptr<Piece> saveEnemyPiece = nullptr;
+		if (board[move.row][move.col]) {
+			saveEnemyPiece= board[move.row][move.col]; //save enemy piece which is removed if its a capture move
+		}
+		
 		board[move.row][move.col] = PtrCurrPiece;//move current piece
 
 		//find kingposition
@@ -116,7 +119,7 @@ void Piece::removeCheckedMoves(Board& board) {
 						if (enemypiece->getName() == "pawn" && enemypiece->currentField.col != kingpos.col && PtrCurrPiece->getName() == "king") {//sort out special case, where king couldnt move in front of a pawn
 							illegalMoves.push_back(move);
 						}
-						else if(!(enemypiece->getName() == "pawn"))
+						else if (!(enemypiece->getName() == "pawn"))
 						{
 							illegalMoves.push_back(move); //move would lead to check
 							goto exit;
@@ -130,7 +133,13 @@ void Piece::removeCheckedMoves(Board& board) {
 			}
 		}
 	exit:;
-		board[move.row][move.col] = saveEnemyPiece; //put enemy piece back
+		if (saveEnemyPiece) {
+			board[move.row][move.col] = saveEnemyPiece; //put enemy piece back
+		}
+		else {
+			board[move.row][move.col] = nullptr;
+		}
+
 		if (enpassant) {
 			board[move.row - (this->isWhite ? 1 : -1)][move.col] = saveEnpassantPiece; //put enpassant captured piece back in 
 			enpassant = false;

@@ -16,12 +16,15 @@ void Game::moveProcedure(std::shared_ptr<Piece> piece, int row, int col) {
 	this->nextTurn(); //toggles turn
 	this->invalidateAllLegalMoves(); //deletes all possible moves of the pieces
 	this->calculateAllLegalMoves(); //calculates legal moves for all pieces
-	auto test = this->checkGameEnd();
-	std::cout << test << std::endl;
+	auto gameEndString = this->checkGameEnd();
+	std::cout << gameEndString << std::endl;
+	if (gameEndString != "") {
+		return;
+	}
 	if (this->playEngine) {
 		if (!board.isWhiteTurn) {
 			std::cout << "Calculating move..." << std::endl;
-			auto bestMove = engine.createTree(this->board, 3);
+			auto bestMove = engine.createTree(this->board, 4);
 			auto perfMove = bestMove.move;
 			if (board[perfMove.pieceCoords.row][perfMove.pieceCoords.col]) {
 				std::cout << "Put the " << board[perfMove.pieceCoords.row][perfMove.pieceCoords.col]->getName() <<

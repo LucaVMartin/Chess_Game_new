@@ -29,7 +29,7 @@ int Engine::evalPosition(Board& board) {
 		//check for checkmate
 		if (check || updateCheckStatus(board)) {
 			checkmatectr++;
-			return (board.isWhiteTurn ? INT_MAX : INT_MIN); //return high/low value if checkmate
+			return (board.isWhiteTurn ? (INT_MAX-1) : (INT_MIN+1)); //return high/low value if checkmate
 		}
 		else
 		{
@@ -67,7 +67,6 @@ evalMove Engine::createTree(Board& board, int depth) {
 	static int numpos = 0;
 	static int lastPrintedPercentage = -1;
 	if (this->testing && originalDepth == -1) {
-		//static Move bestMove;
 		originalDepth = depth;
 		numpos = giveNumPos(originalDepth);
 	}
@@ -83,8 +82,6 @@ evalMove Engine::createTree(Board& board, int depth) {
 				lastPrintedPercentage = progressPercentage; // Update last printed percentage
 			}
 		}
-
-		//std::cout << positionctr << std::endl;
 		return evalMove(Move(), this->evalPosition(board)); //return board value 
 	}
 	else {
@@ -104,16 +101,12 @@ evalMove Engine::createTree(Board& board, int depth) {
 					if (this->testing && depth == 1  ) {
 						this->countCaptures(board, move);//count captures for testing (only at leaf nodes)
 					}
-					curr_move.moveCoords = move;
-					curr_move.pieceCoords = piece->getCurrentField();
 					newBoard.move(newBoard[piece->getCurrentField().row][piece->getCurrentField().col], move.row, move.col);
 					newBoard.isWhiteTurn = !newBoard.isWhiteTurn;
 					//visualize					
 					//visualizeBoard(this->wind, newBoard);
 
 					auto result = createTree(newBoard, depth - 1);
-					/*result.move.moveCoords = move;
-					auto.move.pieceCoords = piece->getCurrentField();*/
 					result.score = -result.score;
 					
 
@@ -122,22 +115,23 @@ evalMove Engine::createTree(Board& board, int depth) {
 						best.move.moveCoords = move;
 						best.move.pieceCoords = piece->getCurrentField();
 					}
-					flagGameEnd++; // to check if no move was done;
+					flagGameEnd++; // to check if there is no legal move;
 				}
 			}
 		}
-		//sf::RenderWindow windowEngine;
-		//visualizeBoard(windowEngine,minboard);
-		if (flagGameEnd == 0) {
-			board.isWhiteTurn = board.isWhiteTurn;
+		if (flagGameEnd == 0) { //no legal move 
 			auto check = updateCheckStatus(board);
+			board.isWhiteTurn = !board.isWhiteTurn;
 			//visualizeBoard(wind, board);
 			if (check) {
-				std::cout << "checkmate before leaf node" << std::endl;
-				best.score = INT_MAX;
-				best.move = curr_move;
+				evalMove resultCM(Move(), -INT_MAX);
+				return resultCM;
 			}
-			else { std::cout << "stalemate before leaf node" << std::endl; }
+			else { 
+				std::cout << "stalemate before leaf node" << std::endl;
+				evalMove resultSM(Move(), 0);
+				return resultSM;
+			}
 		}
 		return best;
 	}

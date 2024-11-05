@@ -45,7 +45,6 @@ public:
 	static inline int capturectr = 0;
 	static inline int positionctr = 0;
 	const bool testing;
-	Move curr_move;
 	//Move currentMove_;
 	sf::RenderWindow wind;
 	evalMove createTree(Board& board, int depth);

@@ -17,6 +17,26 @@ void Engine::visualizeBoard(sf::RenderWindow& windowEngine, Board& board) {
 }
 
 int Engine::evalPosition(Board& board) {
+	bool check = false;
+	if (this->testing) {
+		check = updateCheckStatus(board);
+		if (check) {
+			checkctr++;
+		}
+	}
+	//check for stalemate/checkmate: 
+	if (GameEndCheck(board)) {
+		//check for checkmate
+		if (check || updateCheckStatus(board)) {
+			checkmatectr++;
+			return (board.isWhiteTurn ? INT_MAX : INT_MIN); //return high/low value if checkmate
+		}
+		else
+		{
+			return 0; //stalemate
+		}
+	}
+	//Evaluate position
 	int totalval = 0;
 	for (auto piece : board) {
 		if (piece->isWhite)
@@ -24,43 +44,50 @@ int Engine::evalPosition(Board& board) {
 		else
 			totalval -= piece->pieceval;
 	}
-	return totalval;
+	return ((board.isWhiteTurn ? 1 : -1) * totalval);
 }
 
-int Engine::createTree(Board& board, int depth, int& counter, sf::RenderWindow& wind) {
+int Engine::giveNumPos(int depth) {
+	int numpos;
+	switch (depth) {
+	case 1: numpos = 20; break;
+	case 2: numpos = 400; break;
+	case 3: numpos = 8902; break;
+	case 4: numpos = 197281; break;
+	case 5: numpos = 4865609; break;
+	case 6: numpos = 119060324; break;
+	default: numpos = 0; break; // Handle invalid depths
+	}
+	return numpos;
+}
+
+int Engine::createTree(Board& board, int depth, sf::RenderWindow& wind, Move& bestMove) {
+	int flagGameEnd = 0; //flag to check for game ends before leaf node
 	static int originalDepth = -1;
 	static int numpos = 0;
 	static int lastPrintedPercentage = -1;
-	int flag = 0;
-	if (originalDepth == -1) {
+	if (this->testing && originalDepth == -1) {
+		//static Move bestMove;
 		originalDepth = depth;
-		switch (originalDepth) {
-		case 1: numpos = 20; break;
-		case 2: numpos = 400; break;
-		case 3: numpos = 8902; break;
-		case 4: numpos = 197281; break;
-		case 5: numpos = 4865609; break;
-		case 6: numpos = 119060324; break;
-		default: numpos = 0; break; // Handle invalid depths
-		}
+		numpos = giveNumPos(originalDepth);
 	}
-
 	if (depth == 0) {
-		auto check = updateCheckStatus(board);
-		if (check) {
-			//check for checkmate;
-			this->checkmateCounter(board);
+		if (this->testing)
+		{
+			positionctr++;
+			//visualizeBoard(wind, board);
+			//add return 0 for stalemate
+			int progressPercentage = (positionctr * 100) / numpos;
+			// Check if the progress percentage is a multiple of 5 and hasn't been printed yet
+			if (progressPercentage % 5 == 0 && progressPercentage != lastPrintedPercentage) {
+				std::cout << "Progress: " << progressPercentage << "%" << std::endl;
+				lastPrintedPercentage = progressPercentage; // Update last printed percentage
+			}
 		}
-		//visualizeBoard(wind, board);
-		counter++;
-		int progressPercentage = (counter * 100) / numpos;
-		// Check if the progress percentage is a multiple of 5 and hasn't been printed yet
-		if (progressPercentage % 5 == 0 && progressPercentage != lastPrintedPercentage) {
-			std::cout << "Progress: " << progressPercentage << "%" << std::endl;
-			lastPrintedPercentage = progressPercentage; // Update last printed percentage
-		}
-		//std::cout << counter << std::endl;
-		return counter;
+
+		//std::cout << positionctr << std::endl;
+		auto eval = this->evalPosition(board);
+		return eval; //return board value 
 	}
 	else {
 		// calculate all possible moves
@@ -69,86 +96,44 @@ int Engine::createTree(Board& board, int depth, int& counter, sf::RenderWindow& 
 				pieceFromBoard->setLegalMoves(board);
 		}
 
-		int minval = -10000;
+		int max = INT_MIN;
 		//Board minboard;
 		for (auto piece : board) {
 			if (piece->isWhite == board.isWhiteTurn) {
 				for (auto& move : piece->posMoves) {
-
 					Board newBoard = board;
-					//count captures for testing (only at leaf nodes)
-					if (depth == 1) {
-						this->countCaptures(board, move);
+					if (depth == 1 && this->testing) {
+						this->countCaptures(board, move);//count captures for testing (only at leaf nodes)
 					}
-
 					newBoard.move(newBoard[piece->getCurrentField().row][piece->getCurrentField().col], move.row, move.col);
 					newBoard.isWhiteTurn = !newBoard.isWhiteTurn;
 					//visualize
 					//visualizeBoard(wind, newBoard);
+					auto eval = -createTree(newBoard, depth - 1, wind, bestMove); //call recursion
 
-					auto subtreevalue = createTree(newBoard, depth - 1, counter, wind);
-					if (subtreevalue > minval) {
-						//minboard = newBoard;
-						minval = subtreevalue;
+					if (eval > max) {
+						max = eval;
+						bestMove.moveCoords = move;
+						bestMove.pieceCoords.row = piece->getCurrentField().row;
+						bestMove.pieceCoords.col = piece->getCurrentField().col;
 					}
+					flagGameEnd++; // to check if no move was done;
 				}
 			}
 		}
 		//sf::RenderWindow windowEngine;
 		//visualizeBoard(windowEngine,minboard);
-	}
-}
-
-int Engine::createNoCopyTree(Board& board, int depth, int& counter, sf::RenderWindow& wind) {
-	if (depth == 0) {
-		counter++;
-		std::cout << counter << std::endl;
-		return evalPosition(board);
-	}
-	else {
-
-		// calculate all possible moves
-		for (auto pieceFromBoard : board) {
-			if (pieceFromBoard->isWhite == board.isWhiteTurn)
-				pieceFromBoard->setLegalMoves(board);
-		}
-
-		//std::vector<Board> boardvec;
-		int minval = -10000;
-		//Board minboard;
-		for (const auto piece : board) {
-			if (piece->isWhite == board.isWhiteTurn) {
-				for (const auto& move : piece->posMoves) {
-					auto saveEnemyPiece = board[move.row][move.col];
-					auto savemoveField = move;
-					auto pieceCopy = piece->clone();
-
-					//move Piece
-					board.move(board[piece->getCurrentField().row][piece->getCurrentField().col], move.row, move.col);
-					board.isWhiteTurn = !board.isWhiteTurn;
-					//visualize
-					visualizeBoard(wind, board);
-					auto subtreevalue = createNoCopyTree(board, depth - 1, counter, wind);
-					//undo move
-					board[pieceCopy->getCurrentField().row][pieceCopy->getCurrentField().col] = piece;
-					board[piece->getCurrentField().row][piece->getCurrentField().col] = (saveEnemyPiece ? saveEnemyPiece : nullptr);
-					piece->gotMoved = pieceCopy->gotMoved;
-					piece->posMoves = pieceCopy->posMoves;
-					piece->currentField = pieceCopy->currentField;
-					board.isWhiteTurn = !board.isWhiteTurn;
-
-					visualizeBoard(wind, board);
-
-					if (subtreevalue > minval) {
-						//minboard = newBoard;
-						minval = subtreevalue;
-					}
-				}
+		if (flagGameEnd == 0) {
+			board.isWhiteTurn = board.isWhiteTurn;
+			auto check = updateCheckStatus(board);
+			//visualizeBoard(wind, board);
+			if (check) {
+				std::cout << "checkmate before leaf node" << std::endl;
+				return (board.isWhiteTurn ? INT_MAX : INT_MIN);
 			}
+			else { std::cout << "stalemate before leaf node" << std::endl; return 0; }
 		}
-		//sf::RenderWindow windowEngine;
-		//visualizeBoard(windowEngine,minboard);
-		return minval;
+		return max;
 	}
 }
 
@@ -194,7 +179,6 @@ bool Engine::updateCheckStatus(Board& board)
 					if (king) {
 						if (move == king->getCurrentField()) { // If a move points to the king
 							dynamic_cast<King*>(king.get())->checked = true; // Set the king as checked
-							checkctr++;
 							return true; // Exit the function once we find the king is in check
 						}
 					}
@@ -220,7 +204,7 @@ void Engine::countCaptures(Board& board, Coordinates move)
 	}
 }
 
-void Engine::checkmateCounter(Board& board)
+bool Engine::GameEndCheck(Board& board)
 {
 	auto king = board.isWhiteTurn ? dynamic_cast<King*>(board.whiteKing.get()) : dynamic_cast<King*>(board.blackKing.get());
 	bool posmoves = false;
@@ -230,10 +214,9 @@ void Engine::checkmateCounter(Board& board)
 		if (ownPiece->isWhite == board.isWhiteTurn) {
 			ownPiece->setLegalMoves(board); //calculate legal moves for own piece
 			if (!ownPiece->posMoves.size() == 0) {
-				return;//if there is a legal move, game is not over
+				return false;//if there is a legal move, game is not over
 			}
 		}
 	}
-	//since we already know that the king is checked, we can assume this is checkmate
-	checkmatectr++;
+	return true;
 }

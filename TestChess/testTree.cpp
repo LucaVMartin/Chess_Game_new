@@ -4,20 +4,24 @@
 #include <Game.h>
 
 class CreateTreeTest : public ::testing::Test {
-protected:
+public:
 	Game game;
-	Engine eng_test;
+	Engine* eng_test;
 	sf::RenderWindow window;
 	int counter;
 	int depth;
 	Move best;
 
 	virtual void SetUp() override {
+		eng_test = new Engine(true);
 		window.create(sf::VideoMode(800, 800), "Test Window");
 		window.setFramerateLimit(30);
-		depth = 3; // Set depth for testing
-		auto best_val = eng_test.createTree(game.board, depth, window,best); // Call once
+		depth = 4; // Set depth for testing
+		auto best_val = eng_test->createTree(game.board, depth, window,best); // Call once
 		std::cout << best_val << std::endl;
+	}
+	virtual void TearDown() override {
+		delete eng_test; // Clean up after test
 	}
 };
 
@@ -35,9 +39,9 @@ TEST_F(CreateTreeTest, ValidatesAllCounts) {
 	}
 
 	// Assertions for all counts in one test
-	EXPECT_EQ(eng_test.positionctr, expectedNumpos) << "Incorrect position count.";
+	EXPECT_EQ(eng_test->positionctr, expectedNumpos) << "Incorrect position count.";
 	EXPECT_EQ(game.board.enpassantctr, expectedEnpass) << "Incorrect en passant count.";
-	EXPECT_EQ(eng_test.checkctr, expectedChecks) << "Incorrect check count.";
-	EXPECT_EQ(eng_test.capturectr+game.board.enpassantctr, expectedCaptures) << "Incorrect capture count.";
-	EXPECT_EQ(eng_test.checkmatectr,expectedCheckmates) << "Incorrect checkmate count.";
+	EXPECT_EQ(eng_test->checkctr, expectedChecks) << "Incorrect check count.";
+	EXPECT_EQ(eng_test->capturectr+game.board.enpassantctr, expectedCaptures) << "Incorrect capture count.";
+	EXPECT_EQ(eng_test->checkmatectr,expectedCheckmates) << "Incorrect checkmate count.";
 }

@@ -61,7 +61,7 @@ int Engine::giveNumPos(int depth) {
 	return numpos;
 }
 
-int Engine::createTree(Board& board, int depth, sf::RenderWindow& wind, Move& bestMove) {
+int Engine::createTree(Board& board, int depth, Move& bestMove) {
 	int flagGameEnd = 0; //flag to check for game ends before leaf node
 	static int originalDepth = -1;
 	static int numpos = 0;
@@ -107,11 +107,11 @@ int Engine::createTree(Board& board, int depth, sf::RenderWindow& wind, Move& be
 					}
 					newBoard.move(newBoard[piece->getCurrentField().row][piece->getCurrentField().col], move.row, move.col);
 					newBoard.isWhiteTurn = !newBoard.isWhiteTurn;
-					//visualize
-					//visualizeBoard(wind, newBoard);
-					auto eval = -createTree(newBoard, depth - 1, wind, bestMove); //call recursion
+					//visualize					
+					//visualizeBoard(this->wind, newBoard);
+					auto eval = -createTree(newBoard, depth - 1, bestMove); //call recursion
 
-					if (eval > max) {
+					if (eval >= max) {
 						max = eval;
 						bestMove.moveCoords = move;
 						bestMove.pieceCoords.row = piece->getCurrentField().row;

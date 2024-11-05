@@ -8,9 +8,7 @@
 #include "Rook.h"
 
 #include <iostream>
-Game::Game() : board() {
-	this->calculateAllLegalMoves();
-}
+
 
 void Game::moveProcedure(std::shared_ptr<Piece> piece, int row, int col) {
 	if (!this->board.move(piece, row, col)) return; //moves piece if possible
@@ -20,6 +18,22 @@ void Game::moveProcedure(std::shared_ptr<Piece> piece, int row, int col) {
 	this->calculateAllLegalMoves(); //calculates legal moves for all pieces
 	auto test = this->checkGameEnd();
 	std::cout << test << std::endl;
+	if (this->playEngine) {
+		if (!board.isWhiteTurn) {
+			std::cout << "Calculating move..." << std::endl;
+			engine.createTree(this->board, 3, bestMove_);
+			if (board[bestMove_.pieceCoords.row][bestMove_.pieceCoords.col]) {
+				std::cout << "Put the " << board[bestMove_.pieceCoords.row][bestMove_.pieceCoords.col]->getName() <<
+					" on " << bestMove_.pieceCoords.row << " - " << bestMove_.pieceCoords.col << " to " <<
+					bestMove_.moveCoords.row << " - " << bestMove_.moveCoords.col << std::endl;
+			}
+			else {
+				std::cout << "no piece there!!" << std::endl;
+			}
+
+
+		}
+	}
 }
 
 

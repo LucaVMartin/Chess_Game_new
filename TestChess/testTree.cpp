@@ -14,10 +14,8 @@ public:
 
 	virtual void SetUp() override {
 		eng_test = new Engine(true);
-		window.create(sf::VideoMode(800, 800), "Test Window");
-		window.setFramerateLimit(30);
 		depth = 4; // Set depth for testing
-		auto best_val = eng_test->createTree(game.board, depth, window,best); // Call once
+		auto best_val = eng_test->createTree(game.board, depth, best); // Call once
 		std::cout << best_val << std::endl;
 	}
 	virtual void TearDown() override {

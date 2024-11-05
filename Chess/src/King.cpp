@@ -16,6 +16,7 @@ void King::calculatePossibleMoves(Board& board) {
 		{0, -1},   // left
 	};
 	auto moves = continuousMoveGenerator(board, dirs, 1);
+	posMoves.clear();
 	posMoves = moves;
 
 	if (this->isWhite == board.isWhiteTurn && //Only castle if it is your turn

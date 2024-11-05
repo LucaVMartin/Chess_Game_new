@@ -15,6 +15,7 @@ void Queen::calculatePossibleMoves(Board& board) {
       {0, 1},    // right
       {0, -1},   // left
   };
+  posMoves.clear();
   auto moves = continuousMoveGenerator(board, dirs);
   posMoves = moves;
 }

@@ -1,6 +1,7 @@
 #include "Pawn.h"
 
 void Pawn::calculatePossibleMoves(Board& board) {
+	posMoves.clear();
 	auto boardSize = board.size();
 	auto sign =
 		isWhite ? 1 : -1;  // white moves in different direction than black

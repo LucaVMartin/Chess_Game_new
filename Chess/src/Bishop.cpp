@@ -11,6 +11,7 @@ void Bishop::calculatePossibleMoves(Board& board) {
       {-1, -1},  // diagonal down left
       {-1, 1},   // diagonal down right
   };
+  posMoves.clear();
   auto moves = continuousMoveGenerator(board, dirs);
   posMoves = moves;
 }

@@ -49,6 +49,7 @@ public:
 	sf::RenderWindow wind;
 	evalMove createTree(Board& board, int depth);
 	evalMove alphabeta(Board& board, int depth, int alpha, int beta);
+	Move calculateEngineMove(Board& board, int depth);
 	//int totalCalcDepth;
 private:
 	void visualizeBoard(sf::RenderWindow& windowEngine, Board& board);

@@ -298,3 +298,23 @@ evalMove Engine::alphabeta(Board& board, int depth, int alpha, int beta) {
 		return best;
 	}
 }
+
+Move Engine::calculateEngineMove(Board& board, int depth)
+{
+	if (!board.isWhiteTurn) {
+		std::cout << "Calculating move..." << std::endl;
+		auto bestMove = this->alphabeta(board, depth, -INT_MAX, INT_MAX);
+		auto perfMove = bestMove.move;
+
+		if (board[perfMove.pieceCoords.row][perfMove.pieceCoords.col]) {
+			std::cout << "Put the " << board[perfMove.pieceCoords.row][perfMove.pieceCoords.col]->getName() <<
+				" on " << perfMove.pieceCoords.row << " - " << perfMove.pieceCoords.col << " to " <<
+				perfMove.moveCoords.row << " - " << perfMove.moveCoords.col << std::endl;
+		}
+		else {
+			std::cout << "no piece there!!" << std::endl;
+		}
+		return perfMove;
+
+	}
+}

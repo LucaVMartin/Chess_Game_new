@@ -10,34 +10,15 @@
 #include <iostream>
 
 
-void Game::moveProcedure(std::shared_ptr<Piece> piece, int row, int col) {
-	if (!this->board.move(piece, row, col)) return; //moves piece if possible
+bool Game::moveProcedure(std::shared_ptr<Piece> piece, int row, int col) {
+	if (!this->board.move(piece, row, col)) return false; //moves piece if possible
 	this->isCheck(); //check for check
 	this->nextTurn(); //toggles turn
 	this->invalidateAllLegalMoves(); //deletes all possible moves of the pieces
 	this->calculateAllLegalMoves(); //calculates legal moves for all pieces
 	auto gameEndString = this->checkGameEnd();
 	std::cout << gameEndString << std::endl;
-	if (gameEndString != "") {
-		return;
-	}
-	if (this->playEngine) {
-		if (!board.isWhiteTurn) {
-			std::cout << "Calculating move..." << std::endl;
-			auto bestMove = engine.alphabeta(this->board, 5,-INT_MAX,INT_MAX);
-			auto perfMove = bestMove.move;
-			if (board[perfMove.pieceCoords.row][perfMove.pieceCoords.col]) {
-				std::cout << "Put the " << board[perfMove.pieceCoords.row][perfMove.pieceCoords.col]->getName() <<
-					" on " << perfMove.pieceCoords.row << " - " << perfMove.pieceCoords.col << " to " <<
-					perfMove.moveCoords.row << " - " << perfMove.moveCoords.col << std::endl;
-			}
-			else {
-				std::cout << "no piece there!!" << std::endl;
-			}
-
-
-		}
-	}
+	return true;
 }
 
 
@@ -110,6 +91,13 @@ const std::shared_ptr<Piece> Game::isCheck() {
 		}
 	}
 	return nullptr;
+}
+
+Move Game::performEngineMove(int depth)
+{
+		auto move = engine.calculateEngineMove(this->board, depth);
+		this->moveProcedure(this->board[move.pieceCoords.row][move.pieceCoords.col], move.moveCoords.row, move.moveCoords.col);
+		return move;
 }
 
 Board::Iterator Game::begin() { return board.begin(); }

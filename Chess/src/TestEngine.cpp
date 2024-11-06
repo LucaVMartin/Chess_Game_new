@@ -7,7 +7,7 @@
 #include "Engine.h"
 
 int main() {
-	Game game(true);
+	Game game(true); //with engine
 	Engine eng_test;
 	sf::RenderWindow window;
 	int depth;
@@ -17,9 +17,14 @@ int main() {
 	UI ui{ &window, game };
 	EventHandler e{ game, ui, window };
 
-	depth = 3; // Set depth for testing
+	depth = 5; // Set depth for testing
 
 	while (window.isOpen()) {
+		if (game.playEngine && !game.board.isWhiteTurn) {
+			auto move = game.performEngineMove(depth);
+			ui.CreateRectanglesOfPerformedMove(move.pieceCoords, move.moveCoords);
+			ui.setUItoGame(game);
+		}
 		e.handleEvents();
 		window.clear();
 		ui.drawBoard();

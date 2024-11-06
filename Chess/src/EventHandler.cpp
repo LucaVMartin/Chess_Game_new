@@ -31,6 +31,7 @@ void EventHandler::handleMouseButtonReleased(sf::Event& e) {
 	if (e.mouseButton.button == sf::Mouse::Left) {
 
 		if (this->movingPiece) {
+			auto startSq = movingPiece->getCurrentField();
 			ui.deleteRectanglesOfPossibleMoves();
 			auto piece = this->movingPiece;
 			this->movingPiece = nullptr;
@@ -38,11 +39,16 @@ void EventHandler::handleMouseButtonReleased(sf::Event& e) {
 				ui.coordinatesToIndex({ e.mouseButton.x, e.mouseButton.y });
 
 			//moves piece, sets next turn, checks for check ...
-			game.moveProcedure(piece, row, col);
+			auto performedMove = game.moveProcedure(piece, row, col);
+			if (performedMove) {
+				Coordinates goalSq(row, col);
+				ui.CreateRectanglesOfPerformedMove(startSq, goalSq);
+			}
 
 			if (game.board.promotion) {
 				ui.promotionUI(piece->isWhite);
 			}
+	
 			ui.setUItoGame(game);
 			return;
 		}

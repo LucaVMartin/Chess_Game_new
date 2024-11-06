@@ -101,6 +101,8 @@ void UI::drawBoard() {
 	for (auto& promPiece : PromotionPieces) {
 		window->draw(promPiece);
 	}
+	window->draw(startSquare);
+	window->draw(goalSquare);
 }
 
 sf::Texture* UI::getTexture(const Piece& piece) {
@@ -265,4 +267,17 @@ void UI::drawBoardtest(Board& visboard_, sf::RenderWindow& window_) {
 		window_.draw(sprite);
 	}
 	//window_.display();
+}
+
+void UI::CreateRectanglesOfPerformedMove(Coordinates& startSquare_, Coordinates& newSquare_){
+		auto RectSize1 = (this->getWindowSize().x / 8);
+		auto RectSize2 = (this->getWindowSize().y / 8);
+		this->startSquare = sf::RectangleShape(sf::Vector2f(RectSize1, RectSize2));
+		this->goalSquare = sf::RectangleShape(sf::Vector2f(RectSize1, RectSize2));
+		startSquare.setFillColor(sf::Color(0, 128, 255, 70));
+		goalSquare.setFillColor(sf::Color(0, 128, 255, 70));
+		auto coordinates1 = indexToCoordinates(startSquare_.row, startSquare_.col);
+		auto coordinates2 = indexToCoordinates(newSquare_.row, newSquare_.col);
+		startSquare.setPosition(coordinates1);
+		goalSquare.setPosition(coordinates2);
 }

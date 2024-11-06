@@ -14,12 +14,13 @@ public:
 	const bool playEngine;
 	Board board;
 	Engine engine;
-	Game(bool playEngine_ = false) : playEngine(playEngine_), board(), engine(false, true) {
+	Game(bool playEngine_ = false) : playEngine(playEngine_), board(), engine(false, false) {
 		this->calculateAllLegalMoves();
 	};
 	~Game() = default;
 
-	void moveProcedure(std::shared_ptr<Piece> piece, int row, int col);
+	bool moveProcedure(std::shared_ptr<Piece> piece, int row, int col);
+	Move performEngineMove(int depth);
 	void invalidateAllLegalMoves();
 	void calculateAllLegalMoves();
 	std::string checkGameEnd();

@@ -24,7 +24,7 @@ void Game::moveProcedure(std::shared_ptr<Piece> piece, int row, int col) {
 	if (this->playEngine) {
 		if (!board.isWhiteTurn) {
 			std::cout << "Calculating move..." << std::endl;
-			auto bestMove = engine.createTree(this->board, 4);
+			auto bestMove = engine.alphabeta(this->board, 5,-INT_MAX,INT_MAX);
 			auto perfMove = bestMove.move;
 			if (board[perfMove.pieceCoords.row][perfMove.pieceCoords.col]) {
 				std::cout << "Put the " << board[perfMove.pieceCoords.row][perfMove.pieceCoords.col]->getName() <<

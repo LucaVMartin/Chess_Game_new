@@ -80,7 +80,7 @@ const std::shared_ptr<Piece> Game::isCheck() {
 	}
 
 	for (auto enemypiece : board) {
-		if (enemypiece->isWhite == this->board.isWhiteTurn && enemypiece->getName()!="king") { //only enemy pieces
+		if (enemypiece->isWhite == this->board.isWhiteTurn && enemypiece->getName() != "king") { //only enemy pieces
 			auto enemymoves = enemypiece->calculatePossibleMoves(board);
 			for (auto& enemymove : enemymoves) {
 				if (enemymove == king->getCurrentField()) {//checks if move points to king => check
@@ -95,9 +95,20 @@ const std::shared_ptr<Piece> Game::isCheck() {
 
 Move Game::performEngineMove(int depth)
 {
-		auto move = engine.calculateEngineMove(this->board, depth);
+	auto move = engine.calculateEngineMove(this->board, depth);
+	if (move.isPromotion) {
+		this->board[move.pieceCoords.row][move.pieceCoords.col] = nullptr;
+		this->nextTurn(); //toggles turn
+		this->board.createPromotionPiece(move.PromotionPiece);
+		this->isCheck(); //check for check
+		this->invalidateAllLegalMoves(); //deletes all possible moves of the pieces
+		this->calculateAllLegalMoves(); //calculates legal moves for all pieces
+		auto gameEndString = this->checkGameEnd();
+		std::cout << gameEndString << std::endl;
+	}
+	else
 		this->moveProcedure(this->board[move.pieceCoords.row][move.pieceCoords.col], move.moveCoords.row, move.moveCoords.col);
-		return move;
+	return move;
 }
 
 Board::Iterator Game::begin() { return board.begin(); }

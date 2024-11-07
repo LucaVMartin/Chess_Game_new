@@ -3,18 +3,28 @@
 #include <memory>
 #include "Piece.h"
 #include "Board.h"
-
+#include <iostream>
 struct Move {
 	Coordinates pieceCoords;
 	Coordinates moveCoords;
-
-	Move() : pieceCoords(Coordinates(-1, -1)), moveCoords(Coordinates(-1, -1)) {};
-	Move(Coordinates piece, Coordinates move, int boardeval_ = INT_MIN) : pieceCoords(piece), moveCoords(move) {};
+	bool isPromotion;
+	std::string PromotionPiece;
+	Move() : pieceCoords(Coordinates(-1, -1)), moveCoords(Coordinates(-1, -1)), isPromotion(false) {};
+	Move(Coordinates piece, Coordinates move, bool isPromotion_, std::string PromotionPiece_) : pieceCoords(piece), moveCoords(move), isPromotion(isPromotion_), PromotionPiece(PromotionPiece_) {
+		if (isPromotion_) {
+			if (PromotionPiece_ != "rook" && PromotionPiece_ != "knight" &&
+				PromotionPiece_ != "queen" && PromotionPiece_ != "bishop") {
+				std::cout << "This is not a valid promotion Piece!" << std::endl;
+			}
+		}
+	};
 
 	Move& operator=(const Move& other) {
 		if (this != &other) { // Check for self-assignment
 			this->pieceCoords = other.pieceCoords;
 			this->moveCoords = other.moveCoords;
+			this->isPromotion = other.isPromotion;
+			this->PromotionPiece = other.PromotionPiece;
 		}
 		return *this;
 	}
@@ -58,4 +68,6 @@ private:
 	void countCaptures(Board& board, Coordinates move);
 	bool GameEndCheck(Board& board);
 	int giveNumPos(int depth);
+	const std::vector<Move> moveGenerator(Board& board);
+	void createPromotionPiece(Board& board, Move move);
 };

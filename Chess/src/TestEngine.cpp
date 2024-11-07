@@ -18,7 +18,7 @@ int main() {
 	EventHandler e{ game, ui, window };
 
 	depth = 5; // Set depth for testing
-
+	bool madeMove = true;
 	while (window.isOpen()) {
 		if (game.playEngine && !game.board.isWhiteTurn) {
 			auto move = game.performEngineMove(depth);

@@ -3,6 +3,12 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
+#include "Bishop.h"
+#include "King.h"
+#include "Knight.h"
+#include "Pawn.h"
+#include "Queen.h"
+#include "Rook.h"
 void Engine::visualizeBoard(sf::RenderWindow& windowEngine, Board& board) {
 	if (!windowEngine.isOpen()) {
 		windowEngine.create(sf::VideoMode(800, 800), "TestWindow");
@@ -125,7 +131,7 @@ evalMove Engine::createTree(Board& board, int depth) {
 			board.isWhiteTurn = !board.isWhiteTurn;
 			//visualizeBoard(wind, board);
 			if (check) {
-				return evalMove(Move(), -(INT_MAX ));
+				return evalMove(Move(), -(INT_MAX));
 			}
 			else {
 				std::cout << "stalemate before leaf node" << std::endl;
@@ -246,42 +252,37 @@ evalMove Engine::alphabeta(Board& board, int depth, int alpha, int beta) {
 	}
 	else {
 		// calculate all possible moves
-		for (auto pieceFromBoard : board) {
-			if (pieceFromBoard->isWhite == board.isWhiteTurn)
-				pieceFromBoard->setLegalMoves(board);
-		}
-		;
+		auto allMoves = moveGenerator(board);
 		evalMove best;
 		best.score = INT_MIN;
 		//Board minboard;
-		for (auto piece : board) {
-			if (piece->isWhite == board.isWhiteTurn) {
-				for (auto& move : piece->posMoves) {
-					Board newBoard = board;
-					if (this->testing && depth == 1) {
-						this->countCaptures(board, move);//count captures for testing (only at leaf nodes)
-					}
-					newBoard.move(newBoard[piece->getCurrentField().row][piece->getCurrentField().col], move.row, move.col);
-					newBoard.isWhiteTurn = !newBoard.isWhiteTurn;
-					//visualize					
-					//visualizeBoard(this->wind, newBoard);
-
-					auto result = alphabeta(newBoard, depth - 1, -beta, -alpha);
-					result.score = -result.score;
-
-
-					if (result.score > best.score) {
-						best.score = result.score;
-						best.move.moveCoords = move;
-						best.move.pieceCoords = piece->getCurrentField();
-					}
-					alpha = std::max(alpha, result.score);
-					if (alpha >= beta) {
-						return best;
-					}
-					flagGameEnd++; // to check if there is no legal move;
-				}
+		for (const auto& move : allMoves) {
+			Board newBoard = board;
+			if (this->testing && depth == 1) {
+				this->countCaptures(board, move.moveCoords);//count captures for testing (only at leaf nodes)
 			}
+			//visualizeBoard(this->wind, newBoard);
+			newBoard.move(newBoard[move.pieceCoords.row][move.pieceCoords.col], move.moveCoords.row, move.moveCoords.col);
+			if (move.isPromotion) {
+				createPromotionPiece(newBoard, move);
+			}
+			newBoard.isWhiteTurn = !newBoard.isWhiteTurn;
+			//visualize					
+			//visualizeBoard(this->wind, newBoard);
+
+			auto result = alphabeta(newBoard, depth - 1, -beta, -alpha);
+			result.score = -result.score;
+
+
+			if (result.score > best.score) {
+				best.score = result.score;
+				best.move = move;
+			}
+			alpha = std::max(alpha, result.score);
+			if (alpha >= beta) {
+				return best;
+			}
+			flagGameEnd++; // to check if there is no legal move;
 		}
 		if (flagGameEnd == 0) { //no legal move 
 			auto check = updateCheckStatus(board);
@@ -317,4 +318,44 @@ Move Engine::calculateEngineMove(Board& board, int depth)
 		return perfMove;
 
 	}
+}
+
+const std::vector<Move> Engine::moveGenerator(Board& board)
+{
+	std::vector<Move> MoveList;
+	for (auto pieceFromBoard : board) {
+		if (pieceFromBoard->isWhite == board.isWhiteTurn)
+		{
+			pieceFromBoard->setLegalMoves(board);
+			for (auto const move : pieceFromBoard->posMoves) {
+				if (pieceFromBoard->getName() == "pawn" && move.row == (board.isWhiteTurn ? 7 : 0)) {
+					MoveList.push_back(Move(pieceFromBoard->getCurrentField(), move, true, "queen"));
+					MoveList.push_back(Move(pieceFromBoard->getCurrentField(), move, true, "rook"));
+					MoveList.push_back(Move(pieceFromBoard->getCurrentField(), move, true, "bishop"));
+					MoveList.push_back(Move(pieceFromBoard->getCurrentField(), move, true, "knight"));
+				}
+				else {
+					MoveList.push_back(Move(pieceFromBoard->getCurrentField(), move, false, ""));
+				}
+			}
+		}
+	}
+	return MoveList;
+}
+
+void Engine::createPromotionPiece(Board& board, Move move)
+{
+	if (move.PromotionPiece == "queen") {
+		board[move.pieceCoords.row][move.pieceCoords.col] = std::make_shared<Queen>(move.pieceCoords.row, move.pieceCoords.col, board.isWhiteTurn);
+	}
+	else if (move.PromotionPiece == "knight") {
+		board[move.pieceCoords.row][move.pieceCoords.col] = std::make_shared<Knight>(move.pieceCoords.row, move.pieceCoords.col, board.isWhiteTurn);
+	}
+	else if (move.PromotionPiece == "rook") {
+		board[move.pieceCoords.row][move.pieceCoords.col] = std::make_shared<Rook>(move.pieceCoords.row, move.pieceCoords.col, board.isWhiteTurn);
+	}
+	else if (move.PromotionPiece == "bishop") {
+		board[move.pieceCoords.row][move.pieceCoords.col] = std::make_shared<Bishop>(move.pieceCoords.row, move.pieceCoords.col, board.isWhiteTurn);
+	}
+	board[move.pieceCoords.row][move.pieceCoords.col]->gotMoved = true;
 }

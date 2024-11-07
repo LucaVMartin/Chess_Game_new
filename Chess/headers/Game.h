@@ -14,7 +14,7 @@ public:
 	const bool playEngine;
 	Board board;
 	Engine engine;
-	Game(bool playEngine_ = false) : playEngine(playEngine_), board(), engine(false, false) {
+	Game(bool playEngine_ = false, bool getEngineHints_ = false) : playEngine(playEngine_), board(), engine(false, false) {
 		this->calculateAllLegalMoves();
 	};
 	~Game() = default;

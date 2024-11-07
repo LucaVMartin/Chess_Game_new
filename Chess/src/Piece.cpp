@@ -1,7 +1,7 @@
 #include "Piece.h"
 #include <stdexcept>
 #include "Board.h"
-
+#include <iostream>
 Piece::Piece(int row, int col, bool isWhite, int pieceval_)
 	: isWhite(isWhite), id(counter++), currentField({ row, col }), pieceval(pieceval_) {}
 
@@ -13,7 +13,7 @@ void Piece::invalidateLegalMoves() {
 
 void Piece::setLegalMoves(Board& board) {
 	this->invalidateLegalMoves();
-	calculatePossibleMoves(board);
+	this->posMoves = calculatePossibleMoves(board);
 	removeCheckedMoves(board);
 }
 
@@ -22,7 +22,6 @@ bool Piece::move(int row, int col, Board& board) {
 		if (!this->gotMoved) {
 			this->gotMoved = true;
 			board.firstMovedPiece = board[this->currentField.row][this->currentField.col];
-			//this->justMadeFirstMove = true; //important for enpassant
 		}
 		else {
 			board.firstMovedPiece = nullptr;
@@ -77,8 +76,7 @@ void Piece::removeCheckedMoves(Board& board) {
 	std::shared_ptr<Piece> saveEnpassantPiece;
 
 	//loop over all possible moves of current piece
-	for (auto& move : this->posMoves) {
-
+	for (const auto& move : this->posMoves) {
 		//Check if enpassant
 		if (this->getName() == "pawn" && //check if it is a pawn
 			this->getCurrentField().row == 3 + this->isWhite && //check if white piece is in 4th /black piece in 3rd row 
@@ -111,28 +109,29 @@ void Piece::removeCheckedMoves(Board& board) {
 		}
 
 		//loop over enemy pieces and check if they put check king. if they do => remove move from possible moves
+		bool removeFlag = true;
 		for (auto enemypiece : board) {
 			if (enemypiece->isWhite != this->isWhite) { //only enemy pieces
-				enemypiece->calculatePossibleMoves(board);
-				for (auto& enemymove : enemypiece->posMoves) {
+				auto enemymoves = enemypiece->calculatePossibleMoves(board);
+				for (auto& enemymove : enemymoves) {
 					if (enemymove == kingpos) {//this mean the move would lead to check => not legal
 						if (enemypiece->getName() == "pawn" && enemypiece->currentField.col != kingpos.col && PtrCurrPiece->getName() == "king") {//sort out special case, where king couldnt move in front of a pawn
 							illegalMoves.push_back(move);
+							removeFlag = false;
+							break;
 						}
 						else if (!(enemypiece->getName() == "pawn"))
 						{
 							illegalMoves.push_back(move); //move would lead to check
-							goto exit;
+							removeFlag = false;
+							break;
 						}
 
 					}
 				}
 			}
-			else {
-				continue;
-			}
+			if (!removeFlag)break;
 		}
-	exit:;
 		if (saveEnemyPiece) {
 			board[move.row][move.col] = saveEnemyPiece; //put enemy piece back
 		}

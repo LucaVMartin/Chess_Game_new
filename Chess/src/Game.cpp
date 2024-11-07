@@ -80,9 +80,9 @@ const std::shared_ptr<Piece> Game::isCheck() {
 	}
 
 	for (auto enemypiece : board) {
-		if (enemypiece->isWhite == this->board.isWhiteTurn) { //only enemy pieces
-			enemypiece->calculatePossibleMoves(board);
-			for (auto& enemymove : enemypiece->posMoves) {
+		if (enemypiece->isWhite == this->board.isWhiteTurn && enemypiece->getName()!="king") { //only enemy pieces
+			auto enemymoves = enemypiece->calculatePossibleMoves(board);
+			for (auto& enemymove : enemymoves) {
 				if (enemymove == king->getCurrentField()) {//checks if move points to king => check
 					dynamic_cast<King*>(king.get())->checked = true;
 					return enemypiece;

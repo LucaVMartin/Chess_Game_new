@@ -4,7 +4,7 @@
 #include "Board.h"
 
 
-void King::calculatePossibleMoves(Board& board) {
+std::unordered_set<Coordinates> King::calculatePossibleMoves(Board& board) {
 	std::unordered_set<Coordinates> dirs = {
 		{1, 1},    // diagonal up right
 		{1, -1},   // diagonal up left
@@ -16,8 +16,6 @@ void King::calculatePossibleMoves(Board& board) {
 		{0, -1},   // left
 	};
 	auto moves = continuousMoveGenerator(board, dirs, 1);
-	posMoves.clear();
-	posMoves = moves;
 
 	if (this->isWhite == board.isWhiteTurn && //Only castle if it is your turn
 		!this->gotMoved && //king not moved
@@ -31,23 +29,26 @@ void King::calculatePossibleMoves(Board& board) {
 			!board[this->getCurrentField().row][this->getCurrentField().col + 1] && //Field next to king empty
 			!board[this->getCurrentField().row][this->getCurrentField().col + 2] //Field 2 next to king empty
 			) {
+			bool castleFlag = true;
 			for (auto enemypiece : board) {
 				if (enemypiece->isWhite != this->isWhite) { //only enemy pieces
-					enemypiece->calculatePossibleMoves(board);
-					for (auto& enemymove : enemypiece->posMoves) { //iterate over possible moves of enemy pieces
+					auto enemymoves = enemypiece->calculatePossibleMoves(board);
+					for (auto& enemymove : enemymoves) { //iterate over possible moves of enemy pieces
 						if (enemymove == Coordinates(this->getCurrentField().row, this->getCurrentField().col + 1) ||
-							enemymove == Coordinates(this->getCurrentField().row, this->getCurrentField().col + 2)) {//one of the squares is not attacked
-							return;
+							enemymove == Coordinates(this->getCurrentField().row, this->getCurrentField().col + 2)) {//one of the squares is attacked
+							castleFlag = false;
+							break;
 						}
 					}
 				}
-				else {
-					continue;
-				}
+				if (!castleFlag) break;
 			}
 			//Insert castle move
-			posMoves.insert(Coordinates(this->getCurrentField().row, this->getCurrentField().col + 2));
+			if (castleFlag) {
+				moves.insert(Coordinates(this->getCurrentField().row, this->getCurrentField().col + 2));
+			}
 		}
+
 		//long castle
 		if (
 			board[this->getCurrentField().row][this->getCurrentField().col - 4] && //piece is there 
@@ -57,22 +58,25 @@ void King::calculatePossibleMoves(Board& board) {
 			!board[this->getCurrentField().row][this->getCurrentField().col - 2] &&//Field 2 next to king empty
 			!board[this->getCurrentField().row][this->getCurrentField().col - 3] //Field 3 next to king empty
 			) {
+			bool castleFlag = true;
 			for (auto enemypiece : board) {
 				if (enemypiece->isWhite != this->isWhite) { //only enemy pieces
-					enemypiece->calculatePossibleMoves(board);
-					for (auto& enemymove : enemypiece->posMoves) {
+					auto enemymoves = enemypiece->calculatePossibleMoves(board);
+					for (auto& enemymove : enemymoves) {
 						if (enemymove == Coordinates(this->getCurrentField().row, this->getCurrentField().col - 1) ||
 							enemymove == Coordinates(this->getCurrentField().row, this->getCurrentField().col - 2)) {//one of the squares is not attacked
-							return;
+							castleFlag = false;
+							break;
 						}
 					}
 				}
-				else {
-					continue;
-				}
+				if (!castleFlag) break;
 			}
 			//Insert castle move
-			posMoves.insert(Coordinates(this->getCurrentField().row, this->getCurrentField().col - 2));
+			if (castleFlag) {
+				moves.insert(Coordinates(this->getCurrentField().row, this->getCurrentField().col - 2));
+			}
 		}
 	}
+	return moves;
 }

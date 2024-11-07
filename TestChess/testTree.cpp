@@ -13,7 +13,7 @@ public:
 
 	virtual void SetUp() override {
 		eng_test = new Engine(true);
-		depth = 4; // Set depth for testing
+		depth = 5; // Set depth for testing
 		eng_test->createTree(game.board, depth); // Call once
 	}
 	virtual void TearDown() override {

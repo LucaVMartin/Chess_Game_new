@@ -10,5 +10,5 @@ public:
 	std::shared_ptr<Piece> clone() const override {
 		return std::make_shared<Bishop>(*this); // Copy using the copy constructor
 	}
-	void calculatePossibleMoves(Board& board) override;
+	std::unordered_set<Coordinates> calculatePossibleMoves(Board& board) override;
 };

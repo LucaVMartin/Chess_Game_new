@@ -1,7 +1,7 @@
 #include "Pawn.h"
 
-void Pawn::calculatePossibleMoves(Board& board) {
-	posMoves.clear();
+std::unordered_set<Coordinates> Pawn::calculatePossibleMoves(Board& board) {
+	std::unordered_set<Coordinates> moves;
 	auto boardSize = board.size();
 	auto sign =
 		isWhite ? 1 : -1;  // white moves in different direction than black
@@ -17,7 +17,7 @@ void Pawn::calculatePossibleMoves(Board& board) {
 		if (board[row][col]) break;
 		// 2step move
 		if (i == 2 && this->gotMoved) break;
-		posMoves.insert({ row, col });
+		moves.insert({ row, col });
 	}
 
 	// capture moves
@@ -49,7 +49,7 @@ void Pawn::calculatePossibleMoves(Board& board) {
 			if (board[row][col]->isWhite != this->isWhite) insertMove = true;
 		};  
 
-		if (insertMove) posMoves.insert({ row, col });
+		if (insertMove) moves.insert({ row, col });
 	}
-
+	return moves;
 }

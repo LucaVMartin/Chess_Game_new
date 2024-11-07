@@ -51,7 +51,7 @@ public:
 	bool move(int row, int col, Board& board);
 
 	virtual const std::string getName() const = 0;
-	virtual void calculatePossibleMoves(Board& board) = 0;
+	virtual std::unordered_set<Coordinates> calculatePossibleMoves(Board& board) = 0;
 	virtual void invalidateLegalMoves();
 	
 	//For queen, rook, bishop, King(king might be changed since it is unnecessary here)

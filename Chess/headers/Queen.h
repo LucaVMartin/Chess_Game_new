@@ -11,5 +11,5 @@ public:
 		return std::make_shared<Queen>(*this); // Copy using the copy constructor
 	}
 protected:
-	void calculatePossibleMoves(Board& board) override;
+	std::unordered_set<Coordinates> calculatePossibleMoves(Board& board) override;
 };
